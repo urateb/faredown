@@ -160,14 +160,19 @@ export default function Home() {
         itinerary.segments.map(segment => segment.carrierCode)
       )
     )
-  )).map(code => ({
-    code,
-    name: carrierNames[code] || code
-  })).sort((a, b) => a.name.localeCompare(b.name));
+  )).map(code => {
+    const name = carrierNames[code] || code;
+    return {
+      code,
+      name: name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   // Reset selected carriers when search results change
   useEffect(() => {
-    setSelectedCarriers([]); // Default to show all
+    if (allCarriers.length > 0) {
+      setSelectedCarriers(allCarriers.map(c => c.code));
+    }
   }, [searchResults]);
 
   const hasResults = searchResults.length > 0;

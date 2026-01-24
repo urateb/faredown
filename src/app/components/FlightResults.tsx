@@ -113,17 +113,13 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                                                     const parent = e.currentTarget.parentElement;
                                                                     if (parent) {
                                                                         const span = document.createElement('span');
-                                                                        span.className = 'text-[10px] font-black italic text-blue-900';
+                                                                        span.className = 'text-[10px] font-black italic text-accent';
                                                                         span.innerText = firstSegment.carrierCode;
                                                                         parent.appendChild(span);
                                                                     }
                                                                 }}
                                                             />
                                                         </div>
-                                                    </div>
-
-                                                    <div className="relative w-full flex items-center px-2">
-                                                        <div className="h-[1.5px] flex-grow bg-slate-100 rounded-full"></div>
                                                     </div>
 
                                                     <span className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-tight">
@@ -152,7 +148,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                 <div className="text-3xl font-bold text-slate-900 mb-8 leading-none tracking-tight">
                                     {offer.price.total} {offer.price.currency === 'EUR' ? '€' : offer.price.currency}
                                 </div>
-                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-sm transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em]">
+                                <button className="w-full bg-accent hover:bg-accent/90 text-white font-black py-3 px-6 rounded-sm transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em] cursor-pointer">
                                     Select
                                 </button>
                             </div>
@@ -165,7 +161,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                 <div className="flex justify-center mt-12">
                     <button
                         onClick={handleLoadMore}
-                        className="px-8 py-3 bg-white text-blue-600 font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95 text-sm tracking-wide"
+                        className="px-8 py-3 bg-white cursor-pointer text-accent font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95 text-sm tracking-wide"
                     >
                         Load More Flights
                     </button>

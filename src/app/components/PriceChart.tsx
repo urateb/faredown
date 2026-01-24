@@ -29,7 +29,7 @@ export default function PriceChart({ results }: PriceChartProps) {
             return (
                 <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
                     <p className="font-bold text-gray-900">{label}</p>
-                    <p className="text-blue-600 font-semibold">
+                    <p className="text-accent font-semibold">
                         {payload[0].payload.currency} {payload[0].value.toFixed(2)}
                     </p>
                 </div>
@@ -62,9 +62,9 @@ export default function PriceChart({ results }: PriceChartProps) {
                         <Line
                             type="monotone"
                             dataKey="price"
-                            stroke="#3b82f6"
+                            stroke="#069494"
                             strokeWidth={3}
-                            dot={{ fill: '#3b82f6', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                            dot={{ fill: '#069494', r: 4, strokeWidth: 2, stroke: '#fff' }}
                             activeDot={{ r: 6, strokeWidth: 0 }}
                         />
                     </LineChart>

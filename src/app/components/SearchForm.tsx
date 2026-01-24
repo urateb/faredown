@@ -240,7 +240,7 @@ export default function SearchForm({
 
                     <label className="flex items-center gap-3 cursor-pointer group">
                         <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${stops === 'direct' ? `${filterBorderColor} ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}` : `${filterBorderColor} opacity-70 group-hover:opacity-100`}`}>
-                            {stops === 'direct' && <svg className={`w-3.5 h-3.5 font-bold ${variant === 'dark' ? 'text-white' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                            {stops === 'direct' && <svg className={`w-3.5 h-3.5 font-bold ${variant === 'dark' ? 'text-white' : 'text-accent'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
                         </div>
                         <input
                             type="checkbox" // Keep simple toggle for horizontal view or switch to full control? Use stops === 'direct' vs any for simplicity here
@@ -270,7 +270,7 @@ export default function SearchForm({
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
-                                    className="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none flex flex-col"
+                                    className="px-4 py-3 hover:bg-accent/10 cursor-pointer transition-colors border-b border-gray-50 last:border-none flex flex-col"
                                     onClick={() => handleSelectLocation(airport)}
                                 >
                                     <span className="font-bold text-gray-900">{airport.city} ({airport.code})</span>
@@ -281,7 +281,7 @@ export default function SearchForm({
                     )}
                 </div>
 
-                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
+                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-accent transition-colors ${isVertical
                     ? 'absolute left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Vertical: Absolute centered
                     : '-ml-4 -mr-4 relative' // Horizontal: Relative with negative margins to sit between flex items
                     } ${isVertical ? 'hidden' : ''}`} // Keep hidden in vertical for now unless requested
@@ -304,7 +304,7 @@ export default function SearchForm({
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
-                                    className="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none flex flex-col"
+                                    className="px-4 py-3 hover:bg-accent/10 cursor-pointer transition-colors border-b border-gray-50 last:border-none flex flex-col"
                                     onClick={() => handleSelectLocation(airport)}
                                 >
                                     <span className="font-bold text-gray-900">{airport.city} ({airport.code})</span>
@@ -363,7 +363,7 @@ export default function SearchForm({
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#3b82f6] hover:bg-blue-600 rounded-full flex items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed`}>
+                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#069494] hover:bg-accent/90 rounded-full flex items-center justify-center text-white transition-all transform hover:scale-101 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}>
                     {isLoading ? (
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (

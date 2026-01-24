@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface FilterSidebarProps {
     tripType: 'roundtrip' | 'oneway';
     setTripType: (type: 'roundtrip' | 'oneway') => void;
@@ -22,6 +24,8 @@ export default function FilterSidebar({
     const filterTextColor = 'text-gray-700';
     const filterBorderColor = 'border-gray-700';
 
+    const [showAllCarriers, setShowAllCarriers] = useState(false);
+
     const toggleCarrier = (carrierCode: string) => {
         if (selectedCarriers.includes(carrierCode)) {
             setSelectedCarriers(selectedCarriers.filter(c => c !== carrierCode));
@@ -29,6 +33,8 @@ export default function FilterSidebar({
             setSelectedCarriers([...selectedCarriers, carrierCode]);
         }
     };
+
+    const visibleCarriers = showAllCarriers ? carriers : carriers.slice(0, 5);
 
     return (
         <div className="flex flex-col gap-8 w-full">
@@ -91,12 +97,12 @@ export default function FilterSidebar({
 
             {carriers.length > 0 && (
                 <div className="flex flex-col gap-3 font-medium">
-                    <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Carriers</div>
+                    <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Airlines</div>
 
-                    {carriers.map((carrier) => (
+                    {visibleCarriers.map((carrier) => (
                         <label key={carrier.code} className="flex items-center gap-3 cursor-pointer group px-1">
-                            <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${selectedCarriers.includes(carrier.code) || selectedCarriers.length === 0 ? `${filterBorderColor}` : `${filterBorderColor} opacity-40 group-hover:opacity-100`}`}>
-                                {(selectedCarriers.includes(carrier.code) || selectedCarriers.length === 0) && (
+                            <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${selectedCarriers.includes(carrier.code) ? `${filterBorderColor}` : `${filterBorderColor} opacity-40 group-hover:opacity-100`}`}>
+                                {selectedCarriers.includes(carrier.code) && (
                                     <svg className="w-3.5 h-3.5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
@@ -115,10 +121,19 @@ export default function FilterSidebar({
                                     className="w-4 h-4 rounded-sm"
                                     onError={(e) => (e.currentTarget.style.display = 'none')}
                                 />
-                                <span className={`text-sm ${selectedCarriers.includes(carrier.code) || selectedCarriers.length === 0 ? filterTextColor : `${filterTextColor} opacity-60`}`}>{carrier.name}</span>
+                                <span className={`text-sm ${selectedCarriers.includes(carrier.code) ? filterTextColor : `${filterTextColor} opacity-40`}`}>{carrier.name}</span>
                             </div>
                         </label>
                     ))}
+
+                    {carriers.length > 5 && (
+                        <button
+                            onClick={() => setShowAllCarriers(!showAllCarriers)}
+                            className="text-[10px] font-bold text-accent uppercase tracking-widest mt-2 hover:text-accent/90 transition-colors text-left px-1 cursor-pointer"
+                        >
+                            {showAllCarriers ? '- View Less' : `+ View More (${carriers.length - 5} more)`}
+                        </button>
+                    )}
                 </div>
             )}
         </div>
