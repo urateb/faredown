@@ -1,26 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import SearchForm from './components/SearchForm';
 import FlightResults, { type FlightOffer } from './components/FlightResults';
 import PriceChart from './components/PriceChart';
 import FilterSidebar from './components/FilterSidebar';
 import Slideshow from './components/Slideshow';
-import Header from './components/Header'; // Re-added Header as it was used in the original code
+import Header from './components/Header';
 import { slides } from './data/slides';
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchResults, setSearchResults] = useState<FlightOffer[]>([]);
+  const [isInitialSearchDone, setIsInitialSearchDone] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev: number) => (prev + 1) % slides.length);
     }, 8000);
     return () => clearInterval(timer);
   }, []);
-
-  const hasResults = searchResults.length > 0;
 
   // Lifted state for filters
   const [tripType, setTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
@@ -31,9 +35,126 @@ export default function Home() {
   const [destination, setDestination] = useState('');
   const [departureDate, setDepartureDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
+  const [travelers, setTravelers] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearch = async (forcedParams?: any) => {
+    const sOrigin = forcedParams?.origin || origin;
+    const sDest = forcedParams?.dest || destination;
+    const sDepDate = forcedParams?.depDate || departureDate;
+    const sRetDate = forcedParams?.retDate || returnDate;
+    const sTripType = forcedParams?.tripType || tripType;
+    const sTravelers = forcedParams?.travelers || travelers;
+    const sStops = forcedParams?.stops || stops;
+
+    // Extract code from "City (CODE)" format if present
+    const originCode = sOrigin.match(/\(([^)]+)\)/)?.[1] || sOrigin;
+    const destinationCode = sDest.match(/\(([^)]+)\)/)?.[1] || sDest;
+
+    if (!originCode || !destinationCode || !sDepDate) return;
+
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        origin: originCode,
+        destination: destinationCode,
+        date: sDepDate,
+        adults: sTravelers.toString(),
+        nonStop: (sStops === 'direct').toString()
+      });
+
+      if (sTripType === 'roundtrip' && sRetDate) {
+        params.append('returnDate', sRetDate);
+      }
+
+      const response = await fetch(`/api/search?${params}`);
+      const data = await response.json();
+
+      if (data.error) throw new Error(data.error);
+      setSearchResults(Array.isArray(data) ? data : []);
+
+      // Update URL
+      updateUrl({
+        origin: sOrigin,
+        dest: sDest,
+        depDate: sDepDate,
+        retDate: sTripType === 'roundtrip' ? sRetDate : null,
+        tripType: sTripType,
+        stops: sStops,
+        travelers: sTravelers.toString()
+      });
+    } catch (error) {
+      console.error('Search failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initialize state from URL params and auto-search
+  useEffect(() => {
+    const pTripType = searchParams.get('tripType');
+    const pStops = searchParams.get('stops');
+    const pOrigin = searchParams.get('origin');
+    const pDest = searchParams.get('dest');
+    const pDepDate = searchParams.get('depDate');
+    const pRetDate = searchParams.get('retDate');
+    const pTravelers = searchParams.get('travelers');
+
+    let shouldSearch = false;
+    const params: any = {};
+
+    if (pTripType === 'roundtrip' || pTripType === 'oneway') { setTripType(pTripType); params.tripType = pTripType; }
+    if (pStops === 'any' || pStops === 'direct' || pStops === '1' || pStops === '2+') { setStops(pStops); params.stops = pStops; }
+    if (pOrigin) { setOrigin(pOrigin); params.origin = pOrigin; }
+    if (pDest) { setDestination(pDest); params.dest = pDest; }
+    if (pDepDate) { setDepartureDate(pDepDate); params.depDate = pDepDate; shouldSearch = true; }
+    if (pRetDate) { setReturnDate(pRetDate); params.retDate = pRetDate; }
+    if (pTravelers) { setTravelers(parseInt(pTravelers)); params.travelers = parseInt(pTravelers); }
+
+    if (shouldSearch && !isInitialSearchDone) {
+      setIsInitialSearchDone(true);
+      handleSearch(params);
+    }
+  }, []);
+
+  // Sync state to URL helper
+  const updateUrl = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null) params.delete(key);
+      else params.set(key, value);
+    });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Update URL when sidebar filters change
+  const handleTripTypeChange = (type: 'roundtrip' | 'oneway') => {
+    setTripType(type);
+    updateUrl({ tripType: type });
+  };
+
+  const handleStopsChange = (s: 'any' | 'direct' | '1' | '2+') => {
+    setStops(s);
+    updateUrl({ stops: s });
+  };
+
+  // Called when search button is clicked
+  // const handleSearchPerformed = (results: FlightOffer[]) => {
+  //   setSearchResults(results);
+  //   updateUrl({
+  //     origin,
+  //     dest: destination,
+  //     depDate: departureDate,
+  //     retDate: tripType === 'roundtrip' ? returnDate : null,
+  //     tripType,
+  //     stops
+  //   });
+  // };
+
+  const hasResults = searchResults.length > 0;
 
   // Filter results client-side based on stops
-  const filteredResults = searchResults.filter(offer => {
+  const filteredResults = searchResults.filter((offer: FlightOffer) => {
     const segmentCount = offer.itineraries[0].segments.length;
     if (stops === 'direct') return segmentCount === 1;
     if (stops === '1') return segmentCount <= 2; // Assuming 1 stop means 2 segments
@@ -64,15 +185,15 @@ export default function Home() {
           <div className="w-full max-w-6xl animate-slide-up animation-delay-200 relative z-50 mt-4">
             <SearchForm
               onSearchResults={setSearchResults}
-              // Pass controlled state even on home to keep in sync if we navigated back/forth (though currently separate views)
-              // For now, simpler to leave uncontrolled on home or sync it. 
-              // Let's pass it to ensure consistency if we switch back to results mode logic.
+              onSearchTriggered={handleSearch}
+              isLoading={isLoading}
               origin={origin} setOrigin={setOrigin}
               destination={destination} setDestination={setDestination}
               departureDate={departureDate} setDepartureDate={setDepartureDate}
               returnDate={returnDate} setReturnDate={setReturnDate}
-              tripType={tripType} setTripType={setTripType}
-              stops={stops} setStops={setStops}
+              tripType={tripType} setTripType={handleTripTypeChange}
+              stops={stops} setStops={handleStopsChange}
+              travelers={travelers} setTravelers={setTravelers}
             />
           </div>
         )}
@@ -84,18 +205,21 @@ export default function Home() {
             <div className="w-full max-w-6xl z-50 mt-4 px-6 animate-fade-in-down">
               <SearchForm
                 onSearchResults={setSearchResults}
+                onSearchTriggered={handleSearch}
+                isLoading={isLoading}
                 variant="dark"
                 layout="horizontal"
                 hideFilters={true}
 
                 // Controlled State
-                tripType={tripType} setTripType={setTripType}
-                stops={stops} setStops={setStops} // This ensures the form knows the filter state if it needs to use it for API params
+                tripType={tripType} setTripType={handleTripTypeChange}
+                stops={stops} setStops={handleStopsChange}
 
                 origin={origin} setOrigin={setOrigin}
                 destination={destination} setDestination={setDestination}
                 departureDate={departureDate} setDepartureDate={setDepartureDate}
                 returnDate={returnDate} setReturnDate={setReturnDate}
+                travelers={travelers} setTravelers={setTravelers}
               />
             </div>
 
@@ -106,9 +230,9 @@ export default function Home() {
                 <h2 className="text-lg font-bold text-gray-900 mb-6 px-1">Filters</h2>
                 <FilterSidebar
                   tripType={tripType}
-                  setTripType={setTripType}
+                  setTripType={handleTripTypeChange}
                   stops={stops}
-                  setStops={setStops}
+                  setStops={handleStopsChange}
                 />
               </div>
 

@@ -25,7 +25,11 @@ interface SearchFormProps {
     setDepartureDate?: (val: string) => void;
     returnDate?: string;
     setReturnDate?: (val: string) => void;
+    travelers?: number;
+    setTravelers?: (val: number | ((prev: number) => number)) => void;
 
+    onSearchTriggered?: () => void;
+    isLoading?: boolean;
     hideFilters?: boolean;
 }
 
@@ -46,7 +50,11 @@ export default function SearchForm({
     setDepartureDate: controlledSetDepartureDate,
     returnDate: controlledReturnDate,
     setReturnDate: controlledSetReturnDate,
+    travelers: controlledTravelers,
+    setTravelers: controlledSetTravelers,
 
+    onSearchTriggered,
+    isLoading: controlledIsLoading,
     hideFilters = false
 }: SearchFormProps) {
     // Local state fallback (if not controlled)
@@ -56,6 +64,8 @@ export default function SearchForm({
     const [localDestination, setLocalDestination] = useState('');
     const [localDepartureDate, setLocalDepartureDate] = useState('');
     const [localReturnDate, setLocalReturnDate] = useState('');
+    const [localTravelers, setLocalTravelers] = useState(1);
+    const [localIsLoading, setLocalIsLoading] = useState(false);
 
     // Use controlled state if available, otherwise local
     const tripType = controlledTripType ?? localTripType;
@@ -71,9 +81,10 @@ export default function SearchForm({
     const setDepartureDate = controlledSetDepartureDate ?? setLocalDepartureDate;
     const returnDate = controlledReturnDate ?? localReturnDate;
     const setReturnDate = controlledSetReturnDate ?? setLocalReturnDate;
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [travelers, setTravelers] = useState(1);
+    const travelers = controlledTravelers ?? localTravelers;
+    const setTravelers = controlledSetTravelers ?? setLocalTravelers;
+    const isLoading = controlledIsLoading ?? localIsLoading;
+    const setIsLoading = setLocalIsLoading; // Dummy if controlled, but we should use it consistently
 
     const filterTextColor = variant === 'dark' ? 'text-gray-700' : 'text-white';
     const filterBorderColor = variant === 'dark' ? 'border-gray-700' : 'border-white';
@@ -131,6 +142,11 @@ export default function SearchForm({
     };
 
     const handleSearch = async () => {
+        if (onSearchTriggered) {
+            onSearchTriggered();
+            return;
+        }
+
         // Extract code from "City (CODE)" format if present, otherwise use raw input
         const originCode = origin.match(/\(([^)]+)\)/)?.[1] || origin;
         const destinationCode = destination.match(/\(([^)]+)\)/)?.[1] || destination;
