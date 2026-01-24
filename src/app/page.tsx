@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import SearchForm from './components/SearchForm';
 import FlightResults, { type FlightOffer } from './components/FlightResults';
@@ -10,7 +10,7 @@ import Slideshow from './components/Slideshow';
 import Header from './components/Header';
 import { slides } from './data/slides';
 
-export default function Home() {
+function FlightSearch() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -357,5 +357,13 @@ export default function Home() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <FlightSearch />
+    </Suspense>
   );
 }
