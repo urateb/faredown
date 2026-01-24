@@ -207,7 +207,7 @@ export default function SearchForm({
         <div className={`relative w-full ${isVertical ? 'max-w-xs' : 'max-w-5xl'} mx-auto flex flex-col items-center`} ref={wrapperRef}>
 
             {!hideFilters && (
-                <div className={`flex ${isVertical ? 'flex-col items-start gap-2 w-full' : 'items-center gap-4'} mb-4 font-medium shadow-black/20 drop-shadow-md`}>
+                <div className={`flex ${isVertical ? 'flex-col items-start gap-2 w-full' : 'items-center gap-4'} mb-4 font-medium`}>
                     <label className="flex items-center gap-2 cursor-pointer group">
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'roundtrip' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
                             {tripType === 'roundtrip' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
@@ -248,12 +248,12 @@ export default function SearchForm({
                             checked={stops === 'direct'}
                             onChange={() => setStops(stops === 'direct' ? 'any' : 'direct')}
                         />
-                        <span className={`${filterTextColor} font-medium group-hover:text-white transition-colors text-sm shadow-black/50 drop-shadow-sm opacity-90`}>Direct only</span>
+                        <span className={`${filterTextColor} font-medium group-hover:text-white transition-colors text-sm opacity-90`}>Direct only</span>
                     </label>
                 </div>
             )}
 
-            <div className={`relative w-full bg-white ${isVertical ? 'rounded-3xl flex-col h-auto p-2 pb-16 shadow-lg' : 'rounded-full h-20 flex items-center'} z-10 border-gray-200 border`}>
+            <div className={`relative w-full bg-white ${isVertical ? 'rounded-3xl flex-col h-auto p-2 pb-16' : 'rounded-full h-20 flex items-center'} z-10 border-gray-200 border`}>
 
                 <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-8 border-r rounded-l-full h-full flex flex-col justify-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">From</label>
@@ -266,7 +266,7 @@ export default function SearchForm({
                         onFocus={() => setActiveField('origin')}
                     />
                     {activeField === 'origin' && suggestions.length > 0 && (
-                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
+                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
@@ -281,7 +281,7 @@ export default function SearchForm({
                     )}
                 </div>
 
-                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
+                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
                     ? 'absolute left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Vertical: Absolute centered
                     : '-ml-4 -mr-4 relative' // Horizontal: Relative with negative margins to sit between flex items
                     } ${isVertical ? 'hidden' : ''}`} // Keep hidden in vertical for now unless requested
@@ -300,7 +300,7 @@ export default function SearchForm({
                         onFocus={() => setActiveField('destination')}
                     />
                     {activeField === 'destination' && suggestions.length > 0 && (
-                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
+                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
@@ -363,7 +363,7 @@ export default function SearchForm({
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#3b82f6] hover:bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed`}>
+                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#3b82f6] hover:bg-blue-600 rounded-full flex items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed`}>
                     {isLoading ? (
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (

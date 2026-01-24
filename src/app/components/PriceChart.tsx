@@ -27,7 +27,7 @@ export default function PriceChart({ results }: PriceChartProps) {
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-100">
+                <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
                     <p className="font-bold text-gray-900">{label}</p>
                     <p className="text-blue-600 font-semibold">
                         {payload[0].payload.currency} {payload[0].value.toFixed(2)}
