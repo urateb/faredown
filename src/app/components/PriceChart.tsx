@@ -39,7 +39,7 @@ export default function PriceChart({ results }: PriceChartProps) {
     };
 
     return (
-        <div className="w-full h-64 p-4 mb-0 flex flex-col">
+        <div className="w-full h-64 px-4 mb-0 flex flex-col">
             <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-4">Price Distribution (Cheapest to Expensive)</h3>
             <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">

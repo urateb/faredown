@@ -23,14 +23,19 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const response = await amadeus.shopping.flightOffersSearch.get({
+        const query: any = {
             originLocationCode: origin,
             destinationLocationCode: destination,
             departureDate: departureDate,
-            returnDate: returnDate,
             adults: adults,
             nonStop: nonStop
-        });
+        };
+
+        if (returnDate) {
+            query.returnDate = returnDate;
+        }
+
+        const response = await amadeus.shopping.flightOffersSearch.get(query);
 
         return NextResponse.json(response.data);
     } catch (error: any) {

@@ -51,7 +51,15 @@ export default function Home() {
     const originCode = sOrigin.match(/\(([^)]+)\)/)?.[1] || sOrigin;
     const destinationCode = sDest.match(/\(([^)]+)\)/)?.[1] || sDest;
 
-    if (!originCode || !destinationCode || !sDepDate) return;
+    if (!originCode || !destinationCode || !sDepDate) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (sTripType === 'roundtrip' && !sRetDate) {
+      alert('Please select a return date');
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -226,8 +234,8 @@ export default function Home() {
             <div className="w-full h-full max-w-7xl mx-auto flex justify-center items-start gap-8 pt-8 px-6 overflow-hidden">
 
               {/* Left Column: Filters (Transparent) */}
-              <div className="w-56 h-full pt-4 overflow-y-auto z-40 shrink-0">
-                <h2 className="text-lg font-bold text-gray-900 mb-6 px-1">Filters</h2>
+              <div className="w-56 h-full overflow-y-auto z-40 shrink-0 mt-13">
+                <h2 className="text-lg font-bold text-gray-900 mb-6">Filters:</h2>
                 <FilterSidebar
                   tripType={tripType}
                   setTripType={handleTripTypeChange}
@@ -242,8 +250,8 @@ export default function Home() {
               </div>
 
               {/* Right Column: Chart (Transparent) */}
-              <div className="w-72 h-full pt-4 overflow-y-auto z-40 shrink-0">
-                <h2 className="text-lg font-bold text-gray-900 mb-6 px-4">Price Trends</h2>
+              <div className="w-72 h-full overflow-y-auto z-40 shrink-0 mt-13">
+                <h2 className="text-lg font-bold text-gray-900 mb-6 px-4">Price Trends:</h2>
                 <PriceChart results={filteredResults} />
               </div>
             </div>
