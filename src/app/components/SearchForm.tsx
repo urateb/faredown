@@ -7,21 +7,78 @@ import { airports, Airport } from '../data/airports';
 
 interface SearchFormProps {
     onSearchResults: (results: FlightOffer[]) => void;
-    variant?: 'light' | 'dark'; // 'light' means white text on dark bg, 'dark' means dark text on light bg
+    variant?: 'light' | 'dark';
+    layout?: 'horizontal' | 'vertical';
+    // Controlled props (optional, but used for state lifting)
+    tripType?: 'roundtrip' | 'oneway';
+    setTripType?: (type: 'roundtrip' | 'oneway') => void;
+    // Stops filter
+    stops?: 'any' | 'direct' | '1' | '2+';
+    setStops?: (stops: 'any' | 'direct' | '1' | '2+') => void;
+
+    // Controlled text inputs
+    origin?: string;
+    setOrigin?: (val: string) => void;
+    destination?: string;
+    setDestination?: (val: string) => void;
+    departureDate?: string;
+    setDepartureDate?: (val: string) => void;
+    returnDate?: string;
+    setReturnDate?: (val: string) => void;
+
+    hideFilters?: boolean;
 }
 
-export default function SearchForm({ onSearchResults, variant = 'light' }: SearchFormProps) {
-    const [tripType, setTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
-    const [origin, setOrigin] = useState('');
-    const [destination, setDestination] = useState('');
-    const [departureDate, setDepartureDate] = useState('');
-    const [returnDate, setReturnDate] = useState('');
+export default function SearchForm({
+    onSearchResults,
+    variant = 'light',
+    layout = 'horizontal',
+    tripType: controlledTripType,
+    setTripType: controlledSetTripType,
+    stops: controlledStops,
+    setStops: controlledSetStops,
+    // Controlled inputs
+    origin: controlledOrigin,
+    setOrigin: controlledSetOrigin,
+    destination: controlledDestination,
+    setDestination: controlledSetDestination,
+    departureDate: controlledDepartureDate,
+    setDepartureDate: controlledSetDepartureDate,
+    returnDate: controlledReturnDate,
+    setReturnDate: controlledSetReturnDate,
+
+    hideFilters = false
+}: SearchFormProps) {
+    // Local state fallback (if not controlled)
+    const [localTripType, setLocalTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
+    const [localStops, setLocalStops] = useState<'any' | 'direct' | '1' | '2+'>('any');
+    const [localOrigin, setLocalOrigin] = useState('');
+    const [localDestination, setLocalDestination] = useState('');
+    const [localDepartureDate, setLocalDepartureDate] = useState('');
+    const [localReturnDate, setLocalReturnDate] = useState('');
+
+    // Use controlled state if available, otherwise local
+    const tripType = controlledTripType ?? localTripType;
+    const setTripType = controlledSetTripType ?? setLocalTripType;
+    const stops = controlledStops ?? localStops;
+    const setStops = controlledSetStops ?? setLocalStops;
+
+    const origin = controlledOrigin ?? localOrigin;
+    const setOrigin = controlledSetOrigin ?? setLocalOrigin;
+    const destination = controlledDestination ?? localDestination;
+    const setDestination = controlledSetDestination ?? setLocalDestination;
+    const departureDate = controlledDepartureDate ?? localDepartureDate;
+    const setDepartureDate = controlledSetDepartureDate ?? setLocalDepartureDate;
+    const returnDate = controlledReturnDate ?? localReturnDate;
+    const setReturnDate = controlledSetReturnDate ?? setLocalReturnDate;
+
     const [isLoading, setIsLoading] = useState(false);
-    const [directFlights, setDirectFlights] = useState(false);
     const [travelers, setTravelers] = useState(1);
 
     const filterTextColor = variant === 'dark' ? 'text-gray-700' : 'text-white';
     const filterBorderColor = variant === 'dark' ? 'border-gray-700' : 'border-white';
+
+    const isVertical = layout === 'vertical';
 
     // Auto-suggestion state
     const [suggestions, setSuggestions] = useState<Airport[]>([]);
@@ -95,7 +152,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                 destination: destinationCode,
                 date: departureDate,
                 adults: travelers.toString(),
-                nonStop: directFlights.toString()
+                nonStop: (stops === 'direct').toString() // Using legacy param for direct, filtering for others happens client side or needs new API logic
             });
 
             if (tripType === 'roundtrip' && returnDate) {
@@ -131,56 +188,58 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
     // I will use a prop `variant` which defaults to 'light' (white text) and can be 'dark' (gray text).
 
     return (
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center" ref={wrapperRef}>
+        <div className={`relative w-full ${isVertical ? 'max-w-xs' : 'max-w-5xl'} mx-auto flex flex-col items-center`} ref={wrapperRef}>
 
-            <div className="flex items-center gap-4 mb-4 font-medium shadow-black/20 drop-shadow-md">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'roundtrip' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
-                        {tripType === 'roundtrip' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
-                    </div>
-                    <input
-                        type="radio"
-                        name="tripType"
-                        className="hidden"
-                        checked={tripType === 'roundtrip'}
-                        onChange={() => setTripType('roundtrip')}
-                    />
-                    <span className={`${tripType === 'roundtrip' ? filterTextColor : `${filterTextColor} opacity-80`}`}>Round-trip</span>
-                </label>
+            {!hideFilters && (
+                <div className={`flex ${isVertical ? 'flex-col items-start gap-2 w-full' : 'items-center gap-4'} mb-4 font-medium shadow-black/20 drop-shadow-md`}>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'roundtrip' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
+                            {tripType === 'roundtrip' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
+                        </div>
+                        <input
+                            type="radio"
+                            name="tripType"
+                            className="hidden"
+                            checked={tripType === 'roundtrip'}
+                            onChange={() => setTripType('roundtrip')}
+                        />
+                        <span className={`${tripType === 'roundtrip' ? filterTextColor : `${filterTextColor} opacity-80`}`}>Round-trip</span>
+                    </label>
 
-                <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'oneway' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
-                        {tripType === 'oneway' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
-                    </div>
-                    <input
-                        type="radio"
-                        name="tripType"
-                        className="hidden"
-                        checked={tripType === 'oneway'}
-                        onChange={() => setTripType('oneway')}
-                    />
-                    <span className={`${tripType === 'oneway' ? filterTextColor : `${filterTextColor} opacity-80`}`}>One-way</span>
-                </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'oneway' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
+                            {tripType === 'oneway' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
+                        </div>
+                        <input
+                            type="radio"
+                            name="tripType"
+                            className="hidden"
+                            checked={tripType === 'oneway'}
+                            onChange={() => setTripType('oneway')}
+                        />
+                        <span className={`${tripType === 'oneway' ? filterTextColor : `${filterTextColor} opacity-80`}`}>One-way</span>
+                    </label>
 
-                <div className={`h-5 w-px mx-2 ${variant === 'dark' ? 'bg-gray-400' : 'bg-white/40'}`}></div>
+                    {!isVertical && <div className={`h-5 w-px mx-2 ${variant === 'dark' ? 'bg-gray-400' : 'bg-white/40'}`}></div>}
 
-                <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${directFlights ? `${filterBorderColor} ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}` : `${filterBorderColor} opacity-70 group-hover:opacity-100`}`}>
-                        {directFlights && <svg className={`w-3.5 h-3.5 font-bold ${variant === 'dark' ? 'text-white' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
-                    </div>
-                    <input
-                        type="checkbox"
-                        className="hidden"
-                        checked={directFlights}
-                        onChange={() => setDirectFlights(!directFlights)}
-                    />
-                    <span className={`${filterTextColor} font-medium group-hover:text-white transition-colors text-sm shadow-black/50 drop-shadow-sm opacity-90`}>Direct flights only</span>
-                </label>
-            </div>
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${stops === 'direct' ? `${filterBorderColor} ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}` : `${filterBorderColor} opacity-70 group-hover:opacity-100`}`}>
+                            {stops === 'direct' && <svg className={`w-3.5 h-3.5 font-bold ${variant === 'dark' ? 'text-white' : 'text-blue-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                        </div>
+                        <input
+                            type="checkbox" // Keep simple toggle for horizontal view or switch to full control? Use stops === 'direct' vs any for simplicity here
+                            className="hidden"
+                            checked={stops === 'direct'}
+                            onChange={() => setStops(stops === 'direct' ? 'any' : 'direct')}
+                        />
+                        <span className={`${filterTextColor} font-medium group-hover:text-white transition-colors text-sm shadow-black/50 drop-shadow-sm opacity-90`}>Direct only</span>
+                    </label>
+                </div>
+            )}
 
-            <div className="relative w-full bg-white rounded-full h-20 flex items-center z-10 border-gray-200 border">
+            <div className={`relative w-full bg-white ${isVertical ? 'rounded-3xl flex-col h-auto p-2 pb-16 shadow-lg' : 'rounded-full h-20 flex items-center'} z-10 border-gray-200 border`}>
 
-                <div className="flex-[1.2] px-8 border-r border-gray-200 relative group cursor-pointer hover:bg-gray-50 rounded-l-full h-full flex flex-col justify-center transition-colors">
+                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-8 border-r rounded-l-full h-full flex flex-col justify-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">From</label>
                     <input
                         type="text"
@@ -191,7 +250,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                         onFocus={() => setActiveField('origin')}
                     />
                     {activeField === 'origin' && suggestions.length > 0 && (
-                        <ul className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto">
+                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
@@ -206,12 +265,15 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                     )}
                 </div>
 
-                <div className="switch-button -ml-4 -mr-4 z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors"
+                <div className={`switch-button absolute z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
+                    ? 'left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Adjusted for vertical (approx between fields) - Needs simple logic if we know height
+                    : '-ml-4 -mr-4'
+                    } ${isVertical ? 'hidden' : ''}`} // Hiding swap in vertical for simplicity as requested/planned or keep? Plan said hide or adjust. Hiding for clean sidebar.
                     onClick={handleSwapLocations}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 </div>
 
-                <div className="flex-[1.2] px-8 border-r border-gray-200 relative group cursor-pointer hover:bg-gray-50 h-full flex flex-col justify-center transition-colors">
+                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-8 border-r h-full flex flex-col justify-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">To</label>
                     <input
                         type="text"
@@ -222,7 +284,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                         onFocus={() => setActiveField('destination')}
                     />
                     {activeField === 'destination' && suggestions.length > 0 && (
-                        <ul className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto">
+                        <ul className={`absolute left-0 mt-2 w-[300px] bg-white rounded-xl shadow-2xl overflow-hidden py-1 z-50 border border-gray-100 max-h-60 overflow-y-auto ${isVertical ? 'top-full' : 'top-full'}`}>
                             {suggestions.map((airport) => (
                                 <li
                                     key={airport.code}
@@ -237,8 +299,8 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                     )}
                 </div>
 
-                <div className={`${tripType === 'roundtrip' ? 'flex-[1.6]' : 'flex-[0.8]'} px-8 border-r border-gray-200 relative group cursor-pointer hover:bg-gray-50 h-full flex items-center transition-colors transition-all duration-300`}>
-                    <div className="flex gap-4 w-full">
+                <div className={`${tripType === 'roundtrip' ? (isVertical ? 'w-full' : 'flex-[1.6]') : (isVertical ? 'w-full' : 'flex-[0.8]')} ${isVertical ? 'px-6 py-4 border-b' : 'px-8 border-r h-full flex items-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
+                    <div className={`flex gap-4 w-full ${isVertical ? 'flex-col gap-4' : ''}`}>
                         <div className="flex-1">
                             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5 block whitespace-nowrap">DEPARTURE DATE</label>
                             <input
@@ -249,7 +311,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                             />
                         </div>
                         {tripType === 'roundtrip' && (
-                            <div className="flex-1 border-l border-gray-200 pl-4 animate-fade-in">
+                            <div className={`flex-1 ${isVertical ? 'border-t pt-4' : 'border-l pl-4'} border-gray-200 animate-fade-in`}>
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5 block whitespace-nowrap">RETURN DATE</label>
                                 <input
                                     type="date"
@@ -263,7 +325,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                     </div>
                 </div>
 
-                <div className="flex-[0.8] pl-8 pr-20 relative group cursor-pointer hover:bg-gray-50 rounded-r-full h-full flex flex-col justify-center transition-colors">
+                <div className={`${isVertical ? 'w-full px-6 py-4' : 'flex-[0.8] pl-8 pr-20 rounded-r-full h-full flex flex-col justify-center'} relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">Travelers</label>
                     <div className="flex items-center gap-3">
                         <button
@@ -285,11 +347,11 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-16 h-16 bg-[#3b82f6] hover:bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#3b82f6] hover:bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed`}>
                     {isLoading ? (
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
-                        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <svg className={`${isVertical ? 'w-6 h-6' : 'w-8 h-8'}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     )}
                 </button>
             </div>

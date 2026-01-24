@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { FlightOffer } from './FlightResults';
 
 interface PriceChartProps {
@@ -20,7 +20,7 @@ export default function PriceChart({ results }: PriceChartProps) {
         };
     });
 
-    // Sort by price for better visualization
+    // Sort by price (cheapest first)
     const sortedData = [...data].sort((a, b) => a.price - b.price);
 
     // Provide a simple tooltip component
@@ -39,32 +39,37 @@ export default function PriceChart({ results }: PriceChartProps) {
     };
 
     return (
-        <div className="w-full h-64 bg-white/50 backdrop-blur-sm rounded-2xl p-4 mb-8 shadow-sm border border-gray-100 animate-fade-in">
-            <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-4">Price Overview</h3>
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sortedData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                    <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 600 }}
-                        dy={10}
-                    />
-                    <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 10 }}
-                        tickFormatter={(value) => `${value}`}
-                    />
-                    <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f3f4f6' }} />
-                    <Bar dataKey="price" radius={[4, 4, 0, 0]}>
-                        {sortedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : '#3b82f6'} />
-                        ))}
-                    </Bar>
-                </BarChart>
-            </ResponsiveContainer>
+        <div className="w-full h-64 p-4 mb-0 flex flex-col">
+            <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wide mb-4">Price Distribution (Cheapest to Expensive)</h3>
+            <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={sortedData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#6b7280', fontSize: 12, fontWeight: 600 }}
+                            dy={10}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#9ca3af', fontSize: 10 }}
+                            tickFormatter={(value) => `${value}`}
+                        />
+                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#9ca3af', strokeWidth: 1 }} />
+                        <Line
+                            type="monotone"
+                            dataKey="price"
+                            stroke="#3b82f6"
+                            strokeWidth={3}
+                            dot={{ fill: '#3b82f6', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 }

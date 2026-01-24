@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import PriceChart from './PriceChart';
 
 export interface FlightOffer {
@@ -43,18 +44,31 @@ export default function FlightResults({ results }: FlightResultsProps) {
         return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    const [visibleCount, setVisibleCount] = useState(6);
+
+    // Reset visible count when results change
+    useEffect(() => {
+        setVisibleCount(6);
+    }, [results]);
+
+    const visibleResults = results.slice(0, visibleCount);
+    const hasMore = visibleCount < results.length;
+
+    const handleLoadMore = () => {
+        setVisibleCount(prev => prev + 6);
+    };
+
     return (
-        <div className="w-full max-w-4xl mx-auto mt-8 animate-slide-up pb-20">
-            <PriceChart results={results} />
+        <div className="w-full max-w-4xl mx-auto mt-0 animate-slide-up pb-20">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 drop-shadow-sm">
                 Found {results.length} Flights:
             </h2>
             <div className="grid gap-4">
-                {results.map((offer) => {
+                {visibleResults.map((offer) => {
                     const itinerary = offer.itineraries[0];
                     const firstSegment = itinerary.segments[0];
                     const lastSegment = itinerary.segments[itinerary.segments.length - 1];
-
+                    const duration = itinerary.duration.replace('PT', '').toLowerCase();
                     return (
                         <div
                             key={offer.id}
@@ -105,6 +119,17 @@ export default function FlightResults({ results }: FlightResultsProps) {
                     );
                 })}
             </div>
+
+            {hasMore && (
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={handleLoadMore}
+                        className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:shadow-lg border border-gray-100 hover:bg-gray-50 transition-all transform hover:-translate-y-0.5"
+                    >
+                        Load More Flights
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
