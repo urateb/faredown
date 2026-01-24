@@ -65,55 +65,99 @@ export default function FlightResults({ results }: FlightResultsProps) {
             </h2>
             <div className="grid gap-4">
                 {visibleResults.map((offer) => {
-                    const itinerary = offer.itineraries[0];
-                    const firstSegment = itinerary.segments[0];
-                    const lastSegment = itinerary.segments[itinerary.segments.length - 1];
-                    const duration = itinerary.duration.replace('PT', '').toLowerCase();
                     return (
                         <div
                             key={offer.id}
-                            className="bg-white/90 backdrop-blur-md rounded-2xl p-6 hover:scale-[1.01] transition-transform duration-200 border-gray-200 border"
+                            className="bg-white rounded-lg flex border-gray-200 border shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
                         >
-                            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                            {/* Left Section: Information */}
+                            <div className="flex-grow p-4 sm:p-5 flex flex-col gap-4">
+                                {offer.itineraries.map((itinerary, index) => {
+                                    const firstSegment = itinerary.segments[0];
+                                    const lastSegment = itinerary.segments[itinerary.segments.length - 1];
+                                    const isOutbound = index === 0;
 
-                                {/* Flight Route Info */}
-                                <div className="flex items-center gap-8 flex-1">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-gray-900">{formatTime(firstSegment.departure.at)}</div>
-                                        <div className="text-3xl font-black text-blue-600">{firstSegment.departure.iataCode}</div>
-                                    </div>
+                                    return (
+                                        <div key={index} className="relative">
+                                            {/* Label (Outbound/Inbound) */}
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                                                    {isOutbound ? 'Outbound' : 'Inbound'}
+                                                </span>
+                                                {/* Pin icon placeholder */}
+                                                <svg className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                                </svg>
+                                            </div>
 
-                                    <div className="flex flex-col items-center flex-1 min-w-[120px]">
-                                        <div className="text-gray-500 font-medium text-sm mb-1">
-                                            {formatDuration(itinerary.duration)}
-                                        </div>
-                                        <div className="w-full h-0.5 bg-gray-300 relative flex items-center justify-center">
-                                            <div className="absolute w-2 h-2 bg-blue-500 rounded-full left-0"></div>
-                                            <div className="absolute w-2 h-2 bg-blue-500 rounded-full right-0"></div>
-                                            <svg className="w-6 h-6 text-blue-500 bg-white px-1 absolute" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" /></svg>
-                                        </div>
-                                        <div className="text-gray-400 text-xs mt-1 font-medium">
-                                            {itinerary.segments.length > 1 ? `${itinerary.segments.length - 1} Stop` : 'Direct'}
-                                        </div>
-                                    </div>
+                                            {/* Flight Row */}
+                                            <div className="flex items-center justify-between gap-2 sm:gap-6">
+                                                {/* Departure */}
+                                                <div className="flex flex-col min-w-[50px]">
+                                                    <span className="text-xl font-bold text-slate-900 leading-tight">{formatTime(firstSegment.departure.at)}</span>
+                                                    <span className="text-sm font-semibold text-slate-700 uppercase tracking-wide">{firstSegment.departure.iataCode}</span>
+                                                </div>
 
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-gray-900">{formatTime(lastSegment.arrival.at)}</div>
-                                        <div className="text-3xl font-black text-blue-600">{lastSegment.arrival.iataCode}</div>
+                                                {/* Visual Path */}
+                                                <div className="flex-grow flex flex-col items-center">
+                                                    <div className="flex items-center justify-center gap-2 mb-0.5">
+                                                        <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
+                                                            {formatDuration(itinerary.duration)}
+                                                        </span>
+                                                        <div className="w-6 h-6 rounded-md bg-white border border-slate-100 flex items-center justify-center shadow-sm overflow-hidden">
+                                                            {/* Carrier logo placeholder */}
+                                                            <div className="flex flex-col items-center leading-[0.5]">
+                                                                <span className="text-[6px] font-black italic text-sky-800">{firstSegment.carrierCode}</span>
+                                                                <div className="w-3 h-[1px] bg-sky-200 mt-0.5"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="relative w-full flex items-center">
+                                                        <div className="h-[1px] flex-grow bg-slate-200"></div>
+                                                        <div className="h-[1px] flex-grow bg-slate-200"></div>
+                                                    </div>
+
+                                                    <span className="text-[11px] font-bold text-slate-500 mt-0.5">
+                                                        {itinerary.segments.length > 1 ? `${itinerary.segments.length - 1} Stop` : 'Direct'}
+                                                    </span>
+                                                </div>
+
+                                                {/* Arrival */}
+                                                <div className="flex flex-col items-end min-w-[50px]">
+                                                    <span className="text-xl font-bold text-slate-900 leading-tight">{formatTime(lastSegment.arrival.at)}</span>
+                                                    <span className="text-sm font-semibold text-slate-700 uppercase tracking-wide">{lastSegment.arrival.iataCode}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Divider between itineraries */}
+                                            {index === 0 && offer.itineraries.length > 1 && (
+                                                <div className="absolute -bottom-2 left-0 right-0 border-b border-dashed border-slate-200"></div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Bottom Info Row */}
+                                <div className="flex items-center gap-4 mt-auto">
+                                    <div className="flex items-center gap-1.5 text-slate-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                                        <span className="text-[11px] font-bold">0</span>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                        <span className="text-[11px] font-bold">0</span>
                                     </div>
+                                    <svg className="w-4 h-4 text-slate-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
                                 </div>
+                            </div>
 
-                                {/* Price Section */}
-                                <div className="flex flex-col items-end border-l-0 md:border-l border-gray-200 md:pl-6 min-w-[140px]">
-                                    <div className="text-gray-500 text-sm font-medium">starting from</div>
-                                    <div className="text-3xl font-black text-gray-900">
-                                        {offer.price.currency} {offer.price.total}
-                                    </div>
-                                    <button className="mt-3 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 text-sm">
-                                        Select
-                                    </button>
+                            {/* Right Section: Price & Select */}
+                            <div className="w-[180px] sm:w-[220px] shrink-0 border-l border-slate-100 flex flex-col items-center justify-center p-6 bg-slate-50/30">
+                                <div className="text-2xl sm:text-3xl font-black text-slate-900 mb-6 drop-shadow-sm leading-none">
+                                    {offer.price.total} {offer.price.currency === 'EUR' ? '€' : offer.price.currency}
                                 </div>
-
+                                <button className="w-full bg-[#009677] hover:bg-[#008569] text-white font-black py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/10 active:scale-95 text-sm uppercase tracking-wider">
+                                    Select
+                                </button>
                             </div>
                         </div>
                     );

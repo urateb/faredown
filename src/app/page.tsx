@@ -223,10 +223,10 @@ export default function Home() {
               />
             </div>
 
-            <div className="w-full flex-1 grid grid-cols-12 gap-0 pt-8 min-h-0">
+            <div className="w-full h-full max-w-7xl mx-auto flex justify-center items-start gap-8 pt-8 px-6 overflow-hidden">
 
               {/* Left Column: Filters (Transparent) */}
-              <div className="col-span-2 h-full pl-8 pr-4 pt-4 overflow-y-auto z-40">
+              <div className="w-56 h-full pt-4 overflow-y-auto z-40 shrink-0">
                 <h2 className="text-lg font-bold text-gray-900 mb-6 px-1">Filters</h2>
                 <FilterSidebar
                   tripType={tripType}
@@ -237,12 +237,12 @@ export default function Home() {
               </div>
 
               {/* Middle Column: Results */}
-              <div className="col-span-7 h-full overflow-y-auto px-4 pb-20 no-scrollbar">
+              <div className="flex-1 h-full overflow-y-auto px-2 pb-20 no-scrollbar">
                 <FlightResults results={filteredResults} />
               </div>
 
               {/* Right Column: Chart (Transparent) */}
-              <div className="col-span-3 h-full pr-8 pl-4 pt-4 overflow-y-auto z-40">
+              <div className="w-72 h-full pt-4 overflow-y-auto z-40 shrink-0">
                 <h2 className="text-lg font-bold text-gray-900 mb-6 px-4">Price Trends</h2>
                 <PriceChart results={filteredResults} />
               </div>
