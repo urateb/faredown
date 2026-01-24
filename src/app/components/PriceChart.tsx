@@ -10,7 +10,6 @@ interface PriceChartProps {
 export default function PriceChart({ results }: PriceChartProps) {
     if (!results || results.length === 0) return null;
 
-    // Process data: Extract airline and price
     const data = results.map(offer => {
         const airlineCode = offer.itineraries[0].segments[0].carrierCode;
         return {
@@ -20,10 +19,8 @@ export default function PriceChart({ results }: PriceChartProps) {
         };
     });
 
-    // Sort by price (cheapest first)
     const sortedData = [...data].sort((a, b) => a.price - b.price);
 
-    // Provide a simple tooltip component
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (

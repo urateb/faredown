@@ -9,14 +9,11 @@ interface SearchFormProps {
     onSearchResults: (results: FlightOffer[]) => void;
     variant?: 'light' | 'dark';
     layout?: 'horizontal' | 'vertical';
-    // Controlled props (optional, but used for state lifting)
     tripType?: 'roundtrip' | 'oneway';
     setTripType?: (type: 'roundtrip' | 'oneway') => void;
-    // Stops filter
     stops?: 'any' | 'direct' | '1' | '2+';
     setStops?: (stops: 'any' | 'direct' | '1' | '2+') => void;
 
-    // Controlled text inputs
     origin?: string;
     setOrigin?: (val: string) => void;
     destination?: string;
@@ -41,7 +38,6 @@ export default function SearchForm({
     setTripType: controlledSetTripType,
     stops: controlledStops,
     setStops: controlledSetStops,
-    // Controlled inputs
     origin: controlledOrigin,
     setOrigin: controlledSetOrigin,
     destination: controlledDestination,
@@ -57,7 +53,6 @@ export default function SearchForm({
     isLoading: controlledIsLoading,
     hideFilters = false
 }: SearchFormProps) {
-    // Local state fallback (if not controlled)
     const [localTripType, setLocalTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
     const [localStops, setLocalStops] = useState<'any' | 'direct' | '1' | '2+'>('any');
     const [localOrigin, setLocalOrigin] = useState('');
@@ -67,7 +62,6 @@ export default function SearchForm({
     const [localTravelers, setLocalTravelers] = useState(1);
     const [localIsLoading, setLocalIsLoading] = useState(false);
 
-    // Use controlled state if available, otherwise local
     const tripType = controlledTripType ?? localTripType;
     const setTripType = controlledSetTripType ?? setLocalTripType;
     const stops = controlledStops ?? localStops;
@@ -84,14 +78,13 @@ export default function SearchForm({
     const travelers = controlledTravelers ?? localTravelers;
     const setTravelers = controlledSetTravelers ?? setLocalTravelers;
     const isLoading = controlledIsLoading ?? localIsLoading;
-    const setIsLoading = setLocalIsLoading; // Dummy if controlled, but we should use it consistently
+    const setIsLoading = setLocalIsLoading;
 
     const filterTextColor = variant === 'dark' ? 'text-gray-700' : 'text-white';
     const filterBorderColor = variant === 'dark' ? 'border-gray-700' : 'border-white';
 
     const isVertical = layout === 'vertical';
 
-    // Auto-suggestion state
     const [suggestions, setSuggestions] = useState<Airport[]>([]);
     const [activeField, setActiveField] = useState<'origin' | 'destination' | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -147,7 +140,6 @@ export default function SearchForm({
             return;
         }
 
-        // Extract code from "City (CODE)" format if present, otherwise use raw input
         const originCode = origin.match(/\(([^)]+)\)/)?.[1] || origin;
         const destinationCode = destination.match(/\(([^)]+)\)/)?.[1] || destination;
 
@@ -168,7 +160,7 @@ export default function SearchForm({
                 destination: destinationCode,
                 date: departureDate,
                 adults: travelers.toString(),
-                nonStop: (stops === 'direct').toString() // Using legacy param for direct, filtering for others happens client side or needs new API logic
+                nonStop: (stops === 'direct').toString()
             });
 
             if (tripType === 'roundtrip' && returnDate) {
@@ -178,9 +170,7 @@ export default function SearchForm({
             const response = await fetch(`/api/search?${params}`);
             const data = await response.json();
 
-            console.log('Flight Search Results:', data);
             if (onSearchResults) {
-                // If API returns an error object, handle it gracefully
                 if (data.error) {
                     throw new Error(data.error);
                 }
@@ -194,23 +184,14 @@ export default function SearchForm({
         }
     };
 
-    // Check if we are in "results mode" (light background) to style texts dark
-    // For now assuming we pass a prop or infer from context? 
-    // Actually, the user asked for specific colors. Let's add a prop.
-    // Re-reading implementation plan: I intended to add props.
-    // Since I can't change the interface in this specific replacement block easily without context,
-    // I made a mistake in the previous thought. I need to update the interface first or together.
-    // The instructions said "Make the background... for the results...".
-    // I will use a prop `variant` which defaults to 'light' (white text) and can be 'dark' (gray text).
-
     return (
         <div className={`relative w-full ${isVertical ? 'max-w-xs' : 'max-w-5xl'} mx-auto flex flex-col items-center`} ref={wrapperRef}>
 
             {!hideFilters && (
-                <div className={`flex ${isVertical ? 'flex-col items-start gap-2 w-full' : 'items-center gap-4'} mb-4 font-medium`}>
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                <div className={`flex ${isVertical ? 'flex-col items-start gap-2 w-full' : 'items-center gap-3 sm:gap-4'} mb-4 font-medium overflow-x-auto no-scrollbar w-full px-4 justify-start sm:justify-center`}>
+                    <label className="flex items-center gap-2 cursor-pointer group flex-shrink-0">
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'roundtrip' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
-                            {tripType === 'roundtrip' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
+                            {tripType === 'roundtrip' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-[#069494]' : 'bg-white'}`} />}
                         </div>
                         <input
                             type="radio"
@@ -219,12 +200,12 @@ export default function SearchForm({
                             checked={tripType === 'roundtrip'}
                             onChange={() => setTripType('roundtrip')}
                         />
-                        <span className={`${tripType === 'roundtrip' ? filterTextColor : `${filterTextColor} opacity-80`}`}>Round-trip</span>
+                        <span className={`text-sm sm:text-base ${tripType === 'roundtrip' ? filterTextColor : `${filterTextColor} opacity-80`}`}>Round-trip</span>
                     </label>
 
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                    <label className="flex items-center gap-2 cursor-pointer group flex-shrink-0">
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${tripType === 'oneway' ? filterBorderColor : `${filterBorderColor} opacity-60 group-hover:opacity-100`}`}>
-                            {tripType === 'oneway' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}`} />}
+                            {tripType === 'oneway' && <div className={`w-2.5 h-2.5 rounded-full ${variant === 'dark' ? 'bg-[#069494]' : 'bg-white'}`} />}
                         </div>
                         <input
                             type="radio"
@@ -233,29 +214,29 @@ export default function SearchForm({
                             checked={tripType === 'oneway'}
                             onChange={() => setTripType('oneway')}
                         />
-                        <span className={`${tripType === 'oneway' ? filterTextColor : `${filterTextColor} opacity-80`}`}>One-way</span>
+                        <span className={`text-sm sm:text-base ${tripType === 'oneway' ? filterTextColor : `${filterTextColor} opacity-80`}`}>One-way</span>
                     </label>
 
-                    {!isVertical && <div className={`h-5 w-px mx-2 ${variant === 'dark' ? 'bg-gray-400' : 'bg-white/40'}`}></div>}
+                    {!isVertical && <div className={`h-5 w-px mx-0.5 sm:mx-2 ${variant === 'dark' ? 'bg-gray-400' : 'bg-white/40'} hidden sm:block`}></div>}
 
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${stops === 'direct' ? `${filterBorderColor} ${variant === 'dark' ? 'bg-gray-700' : 'bg-white'}` : `${filterBorderColor} opacity-70 group-hover:opacity-100`}`}>
+                    <label className="flex items-center gap-3 cursor-pointer group flex-shrink-0">
+                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${stops === 'direct' ? `${filterBorderColor} ${variant === 'dark' ? 'bg-[#069494]' : 'bg-white'}` : `${filterBorderColor} opacity-70 group-hover:opacity-100`}`}>
                             {stops === 'direct' && <svg className={`w-3.5 h-3.5 font-bold ${variant === 'dark' ? 'text-white' : 'text-accent'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
                         </div>
                         <input
-                            type="checkbox" // Keep simple toggle for horizontal view or switch to full control? Use stops === 'direct' vs any for simplicity here
+                            type="checkbox"
                             className="hidden"
                             checked={stops === 'direct'}
                             onChange={() => setStops(stops === 'direct' ? 'any' : 'direct')}
                         />
-                        <span className={`${filterTextColor} font-medium group-hover:text-white transition-colors text-sm opacity-90`}>Direct only</span>
+                        <span className={`text-sm sm:text-base ${filterTextColor} font-medium group-hover:text-white transition-colors opacity-90`}>Direct only</span>
                     </label>
                 </div>
             )}
 
-            <div className={`relative w-full bg-white ${isVertical ? 'rounded-3xl flex-col h-auto p-2 pb-16' : 'rounded-full h-20 flex items-center'} z-10 border-gray-200 border`}>
+            <div className={`relative w-full bg-white ${isVertical ? 'rounded-3xl flex-col h-auto p-2 pb-16 shadow-2xl' : 'rounded-3xl xl:rounded-full h-auto xl:h-20 flex flex-col xl:flex-row items-stretch xl:items-center py-2 xl:py-0'} z-10 border-gray-200 border shadow-xl`}>
 
-                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-8 border-r rounded-l-full h-full flex flex-col justify-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
+                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-6 xl:px-8 border-b xl:border-b-0 xl:border-r xl:rounded-l-full h-auto xl:h-full flex flex-col justify-center py-4 xl:py-0'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">From</label>
                     <input
                         type="text"
@@ -281,15 +262,17 @@ export default function SearchForm({
                     )}
                 </div>
 
-                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-accent transition-colors ${isVertical
-                    ? 'absolute left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Vertical: Absolute centered
-                    : '-ml-4 -mr-4 relative' // Horizontal: Relative with negative margins to sit between flex items
-                    } ${isVertical ? 'hidden' : ''}`} // Keep hidden in vertical for now unless requested
+                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-2 cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-accent transition-all shadow-md 
+                    ${isVertical ? 'hidden' : 'absolute xl:relative'} 
+                    left-1/2 xl:left-0 
+                    -translate-x-1/2 xl:translate-x-0 
+                    top-[76px] xl:top-auto 
+                    xl:-ml-4 xl:-mr-4`}
                     onClick={handleSwapLocations}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <svg className="w-5 h-5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 </div>
 
-                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-8 border-r h-full flex flex-col justify-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
+                <div className={`${isVertical ? 'w-full px-6 py-4 border-b' : 'flex-[1.2] px-6 xl:px-8 border-b xl:border-b-0 xl:border-r h-auto xl:h-full flex flex-col justify-center py-4 xl:py-0'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">To</label>
                     <input
                         type="text"
@@ -315,7 +298,7 @@ export default function SearchForm({
                     )}
                 </div>
 
-                <div className={`${tripType === 'roundtrip' ? (isVertical ? 'w-full' : 'flex-[1.6]') : (isVertical ? 'w-full' : 'flex-[0.8]')} ${isVertical ? 'px-6 py-4 border-b' : 'px-8 border-r h-full flex items-center'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
+                <div className={`${tripType === 'roundtrip' ? (isVertical ? 'w-full' : 'flex-[1.6]') : (isVertical ? 'w-full' : 'flex-[0.8]')} ${isVertical ? 'px-6 py-4 border-b' : 'px-6 xl:px-8 border-b xl:border-b-0 xl:border-r h-auto xl:h-full flex items-center py-4 xl:py-0'} border-gray-200 relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <div className={`flex gap-4 w-full ${isVertical ? 'flex-col gap-4' : ''}`}>
                         <div className="flex-1">
                             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5 block whitespace-nowrap">DEPARTURE DATE</label>
@@ -341,7 +324,7 @@ export default function SearchForm({
                     </div>
                 </div>
 
-                <div className={`${isVertical ? 'w-full px-6 py-4' : 'flex-[0.8] pl-8 pr-20 rounded-r-full h-full flex flex-col justify-center'} relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
+                <div className={`${isVertical ? 'w-full px-6 py-4' : 'flex-[0.8] px-6 xl:pl-8 xl:pr-24 xl:rounded-r-full h-auto xl:h-full flex flex-col justify-center py-4 xl:py-0'} relative group cursor-pointer hover:bg-gray-50 transition-colors`}>
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">Travelers</label>
                     <div className="flex items-center gap-3">
                         <button
@@ -363,7 +346,7 @@ export default function SearchForm({
                 <button
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-16 h-16'} bg-[#069494] hover:bg-accent/90 rounded-full flex items-center justify-center text-white transition-all transform hover:scale-101 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}>
+                    className={`absolute ${isVertical ? 'bottom-2 right-2 w-12 h-12' : 'bottom-4 right-4 xl:right-2 xl:top-1/2 xl:-translate-y-1/2 w-14 xl:w-16 h-14 xl:h-16'} bg-[#069494] hover:bg-accent/90 rounded-full flex items-center justify-center text-white transition-all transform hover:scale-101 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg`}>
                     {isLoading ? (
                         <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (

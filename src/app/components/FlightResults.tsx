@@ -35,19 +35,16 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
         return null;
     }
 
-    // Helper to format duration like PT2H30M -> 2h 30m
     const formatDuration = (duration: string) => {
         return duration.replace('PT', '').toLowerCase();
     };
 
-    // Helper to format date
     const formatTime = (dateString: string) => {
         return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const [visibleCount, setVisibleCount] = useState(6);
 
-    // Reset visible count when results change
     useEffect(() => {
         setVisibleCount(6);
     }, [results]);
@@ -60,7 +57,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto mt-0 animate-slide-up pb-20">
+        <div className="w-full max-w-4xl mx-auto mt-4 lg:mt-0 animate-slide-up pb-20">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 font-sans">
                 Found {results.length} Flights:
             </h2>
@@ -69,10 +66,9 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                     return (
                         <div
                             key={offer.id}
-                            className="bg-white rounded-xl flex border-gray-200 border overflow-hidden transition-all duration-200 group"
+                            className="bg-white rounded-2xl lg:rounded-xl flex flex-col lg:flex-row border-gray-200 border overflow-hidden transition-all duration-200 group shadow-sm hover:shadow-md"
                         >
-                            {/* Left Section: Information */}
-                            <div className="flex-grow p-6 sm:p-8 flex flex-col gap-8">
+                            <div className="flex-grow p-5 sm:p-6 lg:p-8 flex flex-col gap-6 lg:gap-8">
                                 {offer.itineraries.map((itinerary, index) => {
                                     const firstSegment = itinerary.segments[0];
                                     const lastSegment = itinerary.segments[itinerary.segments.length - 1];
@@ -80,22 +76,18 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
 
                                     return (
                                         <div key={index} className="relative">
-                                            {/* Label (Outbound/Inbound) */}
                                             <div className="flex justify-between items-center mb-2">
                                                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                                     {isOutbound ? 'Outbound' : 'Inbound'}
                                                 </span>
                                             </div>
 
-                                            {/* Flight Row */}
                                             <div className="flex items-center justify-between gap-4 sm:gap-10">
-                                                {/* Departure */}
-                                                <div className="flex flex-col min-w-[60px]">
-                                                    <span className="text-sm font-bold text-slate-500 leading-none">{formatTime(firstSegment.departure.at)}</span>
-                                                    <span className="text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{firstSegment.departure.iataCode}</span>
+                                                <div className="flex flex-col min-w-[50px] sm:min-w-[60px]">
+                                                    <span className="text-[10px] sm:text-sm font-bold text-slate-500 leading-none">{formatTime(firstSegment.departure.at)}</span>
+                                                    <span className="text-xl sm:text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{firstSegment.departure.iataCode}</span>
                                                 </div>
 
-                                                {/* Visual Path */}
                                                 <div className="flex-grow flex flex-col items-center">
                                                     <div className="flex items-center justify-center gap-3 mb-1">
                                                         <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
@@ -108,12 +100,11 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                                                 title={carrierNames[firstSegment.carrierCode] || firstSegment.carrierCode}
                                                                 className="w-full h-full object-contain p-1"
                                                                 onError={(e) => {
-                                                                    // Fallback if logo fails
                                                                     e.currentTarget.style.display = 'none';
                                                                     const parent = e.currentTarget.parentElement;
                                                                     if (parent) {
                                                                         const span = document.createElement('span');
-                                                                        span.className = 'text-[10px] font-black italic text-accent';
+                                                                        span.className = 'text-[10px] font-black italic text-[#069494]';
                                                                         span.innerText = firstSegment.carrierCode;
                                                                         parent.appendChild(span);
                                                                     }
@@ -127,14 +118,12 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                                     </span>
                                                 </div>
 
-                                                {/* Arrival */}
-                                                <div className="flex flex-col items-end min-w-[60px]">
-                                                    <span className="text-sm font-bold text-slate-500 leading-none">{formatTime(lastSegment.arrival.at)}</span>
-                                                    <span className="text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{lastSegment.arrival.iataCode}</span>
+                                                <div className="flex flex-col items-end min-w-[50px] sm:min-w-[60px]">
+                                                    <span className="text-[10px] sm:text-sm font-bold text-slate-500 leading-none">{formatTime(lastSegment.arrival.at)}</span>
+                                                    <span className="text-xl sm:text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{lastSegment.arrival.iataCode}</span>
                                                 </div>
                                             </div>
 
-                                            {/* Divider between itineraries */}
                                             {index === 0 && offer.itineraries.length > 1 && (
                                                 <div className="absolute -bottom-4 left-0 right-0 border-b border-dashed border-slate-200"></div>
                                             )}
@@ -143,12 +132,11 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                 })}
                             </div>
 
-                            {/* Right Section: Price & Select */}
-                            <div className="w-[180px] sm:w-[240px] shrink-0 border-l border-slate-200 flex flex-col items-center justify-center p-8 bg-slate-50/20">
-                                <div className="text-3xl font-bold text-slate-900 mb-8 leading-none tracking-tight">
+                            <div className="w-full lg:w-[240px] shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200 flex flex-row lg:flex-col items-center justify-between lg:justify-center p-5 lg:p-8 bg-slate-50/30">
+                                <div className="text-2xl lg:text-3xl font-bold text-slate-900 leading-none tracking-tight">
                                     {offer.price.total} {offer.price.currency === 'EUR' ? '€' : offer.price.currency}
                                 </div>
-                                <button className="w-full bg-accent hover:bg-accent/90 text-white font-black py-3 px-6 rounded-sm transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em] cursor-pointer">
+                                <button className="bg-[#069494] hover:bg-accent/90 text-white font-black py-3 px-8 lg:w-full lg:mt-8 rounded-xl lg:rounded-sm transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em] cursor-pointer shadow-md">
                                     Select
                                 </button>
                             </div>
@@ -161,7 +149,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                 <div className="flex justify-center mt-12">
                     <button
                         onClick={handleLoadMore}
-                        className="px-8 py-3 bg-white cursor-pointer text-accent font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95 text-sm tracking-wide"
+                        className="px-8 py-3 bg-white cursor-pointer text-[#069494] font-bold rounded-xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95 text-sm tracking-wide"
                     >
                         Load More Flights
                     </button>

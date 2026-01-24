@@ -6,43 +6,25 @@ const amadeus = new Amadeus({
     clientSecret: process.env.AMADEUS_CLIENT_SECRET,
 });
 
-export async function GET(request: NextRequest) {
-    const searchParams = request.nextUrl.searchParams;
-    const origin = searchParams.get('origin');
-    const destination = searchParams.get('destination');
-    const departureDate = searchParams.get('date');
-    const returnDate = searchParams.get('returnDate');
-    const adults = searchParams.get('adults') || '1';
-    const nonStop = searchParams.get('nonStop') === 'true';
+export async function GET(req: NextRequest) {
+    const s = req.nextUrl.searchParams;
+    const origin = s.get('origin'), destination = s.get('destination'), date = s.get('date');
 
-    if (!origin || !destination || !departureDate) {
-        return NextResponse.json(
-            { error: 'Missing required parameters' },
-            { status: 400 }
-        );
+    if (!origin || !destination || !date) {
+        return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
     try {
-        const query: any = {
+        const { result } = await amadeus.shopping.flightOffersSearch.get({
             originLocationCode: origin,
             destinationLocationCode: destination,
-            departureDate: departureDate,
-            adults: adults,
-            nonStop: nonStop
-        };
-
-        if (returnDate) {
-            query.returnDate = returnDate;
-        }
-
-        const response = await amadeus.shopping.flightOffersSearch.get(query);
-
-        return NextResponse.json(response.result);
-    } catch (error: any) {
-        console.error('Amadeus API Error:', error);
-        return NextResponse.json(
-            { error: error.description || 'Failed to fetch flight offers' },
-            { status: 500 }
-        );
+            departureDate: date,
+            adults: s.get('adults') || '1',
+            nonStop: s.get('nonStop') === 'true',
+            ...(s.get('returnDate') && { returnDate: s.get('returnDate') })
+        });
+        return NextResponse.json(result);
+    } catch (e: any) {
+        return NextResponse.json({ error: e.description || 'Search failed' }, { status: 500 });
     }
 }

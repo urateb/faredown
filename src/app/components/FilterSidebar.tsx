@@ -10,6 +10,7 @@ interface FilterSidebarProps {
     carriers: { code: string; name: string }[];
     selectedCarriers: string[];
     setSelectedCarriers: (carriers: string[] | ((prev: string[]) => string[])) => void;
+    onClose?: () => void;
 }
 
 export default function FilterSidebar({
@@ -19,7 +20,8 @@ export default function FilterSidebar({
     setStops,
     carriers,
     selectedCarriers,
-    setSelectedCarriers
+    setSelectedCarriers,
+    onClose
 }: FilterSidebarProps) {
     const filterTextColor = 'text-gray-700';
     const filterBorderColor = 'border-gray-700';
@@ -38,6 +40,17 @@ export default function FilterSidebar({
 
     return (
         <div className="flex flex-col gap-8 w-full">
+            {onClose && (
+                <button
+                    onClick={onClose}
+                    className="xl:hidden flex items-center gap-2 text-[#069494] mt-10 font-bold mb-2 hover:opacity-80 transition-opacity"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Back</span>
+                </button>
+            )}
             <div className="flex flex-col gap-3 font-medium">
                 <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Trip Type</div>
 
@@ -129,7 +142,7 @@ export default function FilterSidebar({
                     {carriers.length > 5 && (
                         <button
                             onClick={() => setShowAllCarriers(!showAllCarriers)}
-                            className="text-[10px] font-bold text-accent uppercase tracking-widest mt-2 hover:text-accent/90 transition-colors text-left px-1 cursor-pointer"
+                            className="text-[10px] font-bold text-[#069494] uppercase tracking-widest mt-2 hover:text-[#069494]/90 transition-colors text-left px-1 cursor-pointer"
                         >
                             {showAllCarriers ? '- View Less' : `+ View More (${carriers.length - 5} more)`}
                         </button>
