@@ -1,12 +1,16 @@
 import Amadeus from 'amadeus';
 import { NextRequest, NextResponse } from 'next/server';
 
-const amadeus = new Amadeus({
-    clientId: process.env.AMADEUS_CLIENT_ID,
-    clientSecret: process.env.AMADEUS_CLIENT_SECRET,
-});
-
 export async function GET(req: NextRequest) {
+    const clientId = process.env.AMADEUS_CLIENT_ID;
+    const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+        console.error('Amadeus API credentials are missing from environment variables');
+        return NextResponse.json({ error: 'API configuration error' }, { status: 500 });
+    }
+
+    const amadeus = new Amadeus({ clientId, clientSecret });
     const s = req.nextUrl.searchParams;
     const origin = s.get('origin'), destination = s.get('destination'), date = s.get('date');
 
