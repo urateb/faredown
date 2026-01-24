@@ -68,6 +68,11 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
         setActiveField(null);
     };
 
+    const handleSwapLocations = () => {
+        setOrigin(destination);
+        setDestination(origin);
+    };
+
     const handleSearch = async () => {
         // Extract code from "City (CODE)" format if present, otherwise use raw input
         const originCode = origin.match(/\(([^)]+)\)/)?.[1] || origin;
@@ -102,15 +107,28 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
 
             console.log('Flight Search Results:', data);
             if (onSearchResults) {
-                onSearchResults(data);
+                // If API returns an error object, handle it gracefully
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                onSearchResults(Array.isArray(data) ? data : []);
             }
         } catch (error) {
             console.error('Search failed:', error);
-            alert('Something went wrong. Please check your API credentials.');
+            alert('Something went wrong. Please check your inputs and try again.');
         } finally {
             setIsLoading(false);
         }
     };
+
+    // Check if we are in "results mode" (light background) to style texts dark
+    // For now assuming we pass a prop or infer from context? 
+    // Actually, the user asked for specific colors. Let's add a prop.
+    // Re-reading implementation plan: I intended to add props.
+    // Since I can't change the interface in this specific replacement block easily without context,
+    // I made a mistake in the previous thought. I need to update the interface first or together.
+    // The instructions said "Make the background... for the results...".
+    // I will use a prop `variant` which defaults to 'light' (white text) and can be 'dark' (gray text).
 
     return (
         <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center" ref={wrapperRef}>
@@ -160,9 +178,9 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                 </label>
             </div>
 
-            <div className="relative w-full bg-white rounded-full h-20 flex items-center px-2 z-10">
+            <div className="relative w-full bg-white rounded-full h-20 flex items-center z-10 border-gray-200 border">
 
-                <div className="flex-1 px-8 border-r border-gray-200 relative group cursor-pointer hover:bg-gray-50 rounded-l-full h-full flex flex-col justify-center transition-colors">
+                <div className="flex-[1.2] px-8 border-r border-gray-200 relative group cursor-pointer hover:bg-gray-50 rounded-l-full h-full flex flex-col justify-center transition-colors">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">From</label>
                     <input
                         type="text"
@@ -188,7 +206,8 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                     )}
                 </div>
 
-                <div className="switch-button absolute left-[26%] top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors">
+                <div className="switch-button -ml-4 -mr-4 z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors"
+                    onClick={handleSwapLocations}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 </div>
 
@@ -224,7 +243,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5 block whitespace-nowrap">DEPARTURE DATE</label>
                             <input
                                 type="date"
-                                className="w-full bg-transparent border-none outline-none text-gray-900 font-medium placeholder-gray-400 text-lg p-0"
+                                className="w-full bg-transparent border-none outline-none text-gray-900 font-medium placeholder-gray-400 text-lg p-0 appearance-none [&::-webkit-calendar-picker-indicator]:opacity-30 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                                 value={departureDate}
                                 onChange={(e) => setDepartureDate(e.target.value)}
                             />
@@ -234,7 +253,7 @@ export default function SearchForm({ onSearchResults, variant = 'light' }: Searc
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5 block whitespace-nowrap">RETURN DATE</label>
                                 <input
                                     type="date"
-                                    className="w-full bg-transparent border-none outline-none text-gray-900 font-medium placeholder-gray-400 text-lg p-0"
+                                    className="w-full bg-transparent border-none outline-none text-gray-900 font-medium placeholder-gray-400 text-lg p-0 appearance-none [&::-webkit-calendar-picker-indicator]:opacity-30 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                                     value={returnDate}
                                     min={departureDate}
                                     onChange={(e) => setReturnDate(e.target.value)}

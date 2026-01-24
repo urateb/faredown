@@ -44,7 +44,7 @@ export default function FlightResults({ results }: FlightResultsProps) {
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 animate-slide-up pb-20">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 drop-shadow-sm">
-                Found {results.length} Flights
+                Found {results.length} Flights:
             </h2>
             <div className="grid gap-4">
                 {results.map((offer) => {
@@ -55,7 +55,7 @@ export default function FlightResults({ results }: FlightResultsProps) {
                     return (
                         <div
                             key={offer.id}
-                            className="bg-white/90 backdrop-blur-md rounded-2xl p-6 hover:scale-[1.01] transition-transform duration-200"
+                            className="bg-white/90 backdrop-blur-md rounded-2xl p-6 hover:scale-[1.01] transition-transform duration-200 border-gray-200 border"
                         >
                             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
 
