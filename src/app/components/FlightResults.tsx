@@ -1,3 +1,5 @@
+import PriceChart from './PriceChart';
+
 export interface FlightOffer {
     id: string;
     price: {
@@ -43,6 +45,7 @@ export default function FlightResults({ results }: FlightResultsProps) {
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 animate-slide-up pb-20">
+            <PriceChart results={results} />
             <h2 className="text-2xl font-bold text-gray-900 mb-6 drop-shadow-sm">
                 Found {results.length} Flights:
             </h2>
