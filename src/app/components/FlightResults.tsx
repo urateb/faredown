@@ -35,16 +35,19 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
         return null;
     }
 
+    // Helper to format duration like PT2H30M -> 2h 30m
     const formatDuration = (duration: string) => {
         return duration.replace('PT', '').toLowerCase();
     };
 
+    // Helper to format date
     const formatTime = (dateString: string) => {
         return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const [visibleCount, setVisibleCount] = useState(6);
 
+    // Reset visible count when results change
     useEffect(() => {
         setVisibleCount(6);
     }, [results]);
@@ -68,6 +71,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                             key={offer.id}
                             className="bg-white rounded-xl flex border-gray-200 border overflow-hidden transition-all duration-200 group"
                         >
+                            {/* Left Section: Information */}
                             <div className="flex-grow p-6 sm:p-8 flex flex-col gap-8">
                                 {offer.itineraries.map((itinerary, index) => {
                                     const firstSegment = itinerary.segments[0];
@@ -76,18 +80,22 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
 
                                     return (
                                         <div key={index} className="relative">
+                                            {/* Label (Outbound/Inbound) */}
                                             <div className="flex justify-between items-center mb-2">
                                                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                                     {isOutbound ? 'Outbound' : 'Inbound'}
                                                 </span>
                                             </div>
 
+                                            {/* Flight Row */}
                                             <div className="flex items-center justify-between gap-4 sm:gap-10">
+                                                {/* Departure */}
                                                 <div className="flex flex-col min-w-[60px]">
                                                     <span className="text-sm font-bold text-slate-500 leading-none">{formatTime(firstSegment.departure.at)}</span>
                                                     <span className="text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{firstSegment.departure.iataCode}</span>
                                                 </div>
 
+                                                {/* Visual Path */}
                                                 <div className="flex-grow flex flex-col items-center">
                                                     <div className="flex items-center justify-center gap-3 mb-1">
                                                         <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
@@ -100,6 +108,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                                                 title={carrierNames[firstSegment.carrierCode] || firstSegment.carrierCode}
                                                                 className="w-full h-full object-contain p-1"
                                                                 onError={(e) => {
+                                                                    // Fallback if logo fails
                                                                     e.currentTarget.style.display = 'none';
                                                                     const parent = e.currentTarget.parentElement;
                                                                     if (parent) {
@@ -118,12 +127,14 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                                     </span>
                                                 </div>
 
+                                                {/* Arrival */}
                                                 <div className="flex flex-col items-end min-w-[60px]">
                                                     <span className="text-sm font-bold text-slate-500 leading-none">{formatTime(lastSegment.arrival.at)}</span>
                                                     <span className="text-2xl font-bold text-slate-900 uppercase tracking-widest mt-1">{lastSegment.arrival.iataCode}</span>
                                                 </div>
                                             </div>
 
+                                            {/* Divider between itineraries */}
                                             {index === 0 && offer.itineraries.length > 1 && (
                                                 <div className="absolute -bottom-4 left-0 right-0 border-b border-dashed border-slate-200"></div>
                                             )}
@@ -132,6 +143,7 @@ export default function FlightResults({ results, carrierNames = {} }: FlightResu
                                 })}
                             </div>
 
+                            {/* Right Section: Price & Select */}
                             <div className="w-[180px] sm:w-[240px] shrink-0 border-l border-slate-200 flex flex-col items-center justify-center p-8 bg-slate-50/20">
                                 <div className="text-3xl font-bold text-slate-900 mb-8 leading-none tracking-tight">
                                     {offer.price.total} {offer.price.currency === 'EUR' ? '€' : offer.price.currency}

@@ -27,10 +27,12 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
+  // Lifted state for filters
   const [tripType, setTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
   const [stops, setStops] = useState<'any' | 'direct' | '1' | '2+'>('any');
   const [selectedCarriers, setSelectedCarriers] = useState<string[]>([]);
 
+  // Lifted state for search inputs (to persist values)
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [departureDate, setDepartureDate] = useState('');
@@ -47,6 +49,7 @@ export default function Home() {
     const sTravelers = forcedParams?.travelers || travelers;
     const sStops = forcedParams?.stops || stops;
 
+    // Extract code from "City (CODE)" format if present
     const originCode = sOrigin.match(/\(([^)]+)\)/)?.[1] || sOrigin;
     const destinationCode = sDest.match(/\(([^)]+)\)/)?.[1] || sDest;
 
@@ -85,6 +88,7 @@ export default function Home() {
       setSearchResults(Array.isArray(data) ? data : []);
       setCarrierNames(dictionaries.carriers || {});
 
+      // Update URL
       updateUrl({
         origin: sOrigin,
         dest: sDest,
@@ -101,6 +105,7 @@ export default function Home() {
     }
   };
 
+  // Initialize state from URL params and auto-search
   useEffect(() => {
     const pTripType = searchParams.get('tripType');
     const pStops = searchParams.get('stops');
@@ -127,6 +132,7 @@ export default function Home() {
     }
   }, []);
 
+  // Sync state to URL helper
   const updateUrl = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
@@ -136,6 +142,7 @@ export default function Home() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
+  // Update URL when sidebar filters change
   const handleTripTypeChange = (type: 'roundtrip' | 'oneway') => {
     setTripType(type);
     updateUrl({ tripType: type });
@@ -146,6 +153,7 @@ export default function Home() {
     updateUrl({ stops: s });
   };
 
+  // Extract all unique carriers with their names
   const allCarriers = Array.from(new Set(
     searchResults.flatMap(offer =>
       offer.itineraries.flatMap(itinerary =>
@@ -160,6 +168,7 @@ export default function Home() {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
+  // Reset selected carriers when search results change
   useEffect(() => {
     if (allCarriers.length > 0) {
       setSelectedCarriers(allCarriers.map(c => c.code));
@@ -168,13 +177,16 @@ export default function Home() {
 
   const hasResults = searchResults.length > 0;
 
+  // Filter results client-side
   const filteredResults = searchResults.filter((offer: FlightOffer) => {
+    // Filter by stops
     const segmentCount = offer.itineraries[0].segments.length;
     let stopsMatch = true;
     if (stops === 'direct') stopsMatch = segmentCount === 1;
     else if (stops === '1') stopsMatch = segmentCount <= 2;
     else if (stops === '2+') stopsMatch = segmentCount > 2;
 
+    // Filter by carrier
     const offerCarriers = offer.itineraries.flatMap(itinerary =>
       itinerary.segments.map(segment => segment.carrierCode)
     );
@@ -220,8 +232,10 @@ export default function Home() {
           </div>
         )}
 
+        {/* Results Layout: 3 Columns */}
         {hasResults && (
           <>
+            {/* Top Search Pill (Inputs Only) */}
             <div className="w-full max-w-6xl z-50 mt-4 px-6 animate-fade-in-down">
               <SearchForm
                 onSearchResults={setSearchResults}
@@ -231,6 +245,7 @@ export default function Home() {
                 layout="horizontal"
                 hideFilters={true}
 
+                // Controlled State
                 tripType={tripType} setTripType={handleTripTypeChange}
                 stops={stops} setStops={handleStopsChange}
 
@@ -244,6 +259,7 @@ export default function Home() {
 
             <div className="w-full h-full max-w-7xl mx-auto flex justify-center items-start gap-8 pt-8 px-6 overflow-hidden">
 
+              {/* Left Column: Filters (Transparent) */}
               <div className="w-56 h-full overflow-y-auto z-40 shrink-0 mt-13">
                 <h2 className="text-lg font-bold text-gray-900 mb-6">Filters:</h2>
                 <FilterSidebar
@@ -257,10 +273,12 @@ export default function Home() {
                 />
               </div>
 
+              {/* Middle Column: Results */}
               <div className="flex-1 h-full overflow-y-auto px-2 pb-20 no-scrollbar">
                 <FlightResults results={filteredResults} carrierNames={carrierNames} />
               </div>
 
+              {/* Right Column: Chart (Transparent) */}
               <div className="w-72 h-full overflow-y-auto z-40 shrink-0 mt-13">
                 <h2 className="text-lg font-bold text-gray-900 mb-6 px-4">Price Trends:</h2>
                 <PriceChart results={filteredResults} />
