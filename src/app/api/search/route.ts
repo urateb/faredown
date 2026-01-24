@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
         const response = await amadeus.shopping.flightOffersSearch.get(query);
 
-        return NextResponse.json(response.data);
+        return NextResponse.json(response.result);
     } catch (error: any) {
         console.error('Amadeus API Error:', error);
         return NextResponse.json(

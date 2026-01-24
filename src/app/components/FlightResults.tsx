@@ -27,9 +27,10 @@ export interface FlightOffer {
 
 interface FlightResultsProps {
     results: FlightOffer[];
+    carrierNames?: Record<string, string>;
 }
 
-export default function FlightResults({ results }: FlightResultsProps) {
+export default function FlightResults({ results, carrierNames = {} }: FlightResultsProps) {
     if (!results || results.length === 0) {
         return null;
     }
@@ -100,12 +101,24 @@ export default function FlightResults({ results }: FlightResultsProps) {
                                                         <span className="text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
                                                             {formatDuration(itinerary.duration)}
                                                         </span>
-                                                        <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden">
-                                                            {/* Carrier logo placeholder */}
-                                                            <div className="flex flex-col items-center leading-[0.5]">
-                                                                <span className="text-[7px] font-black italic text-blue-900">{firstSegment.carrierCode}</span>
-                                                                <div className="w-4 h-[1px] bg-blue-100 mt-0.5"></div>
-                                                            </div>
+                                                        <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm">
+                                                            <img
+                                                                src={`https://pics.avs.io/al_40/40/${firstSegment.carrierCode}.png`}
+                                                                alt={carrierNames[firstSegment.carrierCode] || firstSegment.carrierCode}
+                                                                title={carrierNames[firstSegment.carrierCode] || firstSegment.carrierCode}
+                                                                className="w-full h-full object-contain p-1"
+                                                                onError={(e) => {
+                                                                    // Fallback if logo fails
+                                                                    e.currentTarget.style.display = 'none';
+                                                                    const parent = e.currentTarget.parentElement;
+                                                                    if (parent) {
+                                                                        const span = document.createElement('span');
+                                                                        span.className = 'text-[10px] font-black italic text-blue-900';
+                                                                        span.innerText = firstSegment.carrierCode;
+                                                                        parent.appendChild(span);
+                                                                    }
+                                                                }}
+                                                            />
                                                         </div>
                                                     </div>
 
@@ -139,7 +152,7 @@ export default function FlightResults({ results }: FlightResultsProps) {
                                 <div className="text-3xl font-bold text-slate-900 mb-8 leading-none tracking-tight">
                                     {offer.price.total} {offer.price.currency === 'EUR' ? '€' : offer.price.currency}
                                 </div>
-                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-xl transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em]">
+                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-sm transition-all duration-200 active:scale-95 text-xs uppercase tracking-[0.2em]">
                                     Select
                                 </button>
                             </div>

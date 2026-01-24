@@ -17,6 +17,7 @@ export default function Home() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchResults, setSearchResults] = useState<FlightOffer[]>([]);
+  const [carrierNames, setCarrierNames] = useState<Record<string, string>>({});
   const [isInitialSearchDone, setIsInitialSearchDone] = useState(false);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function Home() {
   // Lifted state for filters
   const [tripType, setTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
   const [stops, setStops] = useState<'any' | 'direct' | '1' | '2+'>('any');
+  const [selectedCarriers, setSelectedCarriers] = useState<string[]>([]);
 
   // Lifted state for search inputs (to persist values)
   const [origin, setOrigin] = useState('');
@@ -76,10 +78,15 @@ export default function Home() {
       }
 
       const response = await fetch(`/api/search?${params}`);
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.error) throw new Error(data.error);
+      if (result.error) throw new Error(result.error);
+
+      const data = result.data || [];
+      const dictionaries = result.dictionaries || {};
+
       setSearchResults(Array.isArray(data) ? data : []);
+      setCarrierNames(dictionaries.carriers || {});
 
       // Update URL
       updateUrl({
@@ -146,28 +153,42 @@ export default function Home() {
     updateUrl({ stops: s });
   };
 
-  // Called when search button is clicked
-  // const handleSearchPerformed = (results: FlightOffer[]) => {
-  //   setSearchResults(results);
-  //   updateUrl({
-  //     origin,
-  //     dest: destination,
-  //     depDate: departureDate,
-  //     retDate: tripType === 'roundtrip' ? returnDate : null,
-  //     tripType,
-  //     stops
-  //   });
-  // };
+  // Extract all unique carriers with their names
+  const allCarriers = Array.from(new Set(
+    searchResults.flatMap(offer =>
+      offer.itineraries.flatMap(itinerary =>
+        itinerary.segments.map(segment => segment.carrierCode)
+      )
+    )
+  )).map(code => ({
+    code,
+    name: carrierNames[code] || code
+  })).sort((a, b) => a.name.localeCompare(b.name));
+
+  // Reset selected carriers when search results change
+  useEffect(() => {
+    setSelectedCarriers([]); // Default to show all
+  }, [searchResults]);
 
   const hasResults = searchResults.length > 0;
 
-  // Filter results client-side based on stops
+  // Filter results client-side
   const filteredResults = searchResults.filter((offer: FlightOffer) => {
+    // Filter by stops
     const segmentCount = offer.itineraries[0].segments.length;
-    if (stops === 'direct') return segmentCount === 1;
-    if (stops === '1') return segmentCount <= 2; // Assuming 1 stop means 2 segments
-    if (stops === '2+') return segmentCount > 2;
-    return true; // 'any'
+    let stopsMatch = true;
+    if (stops === 'direct') stopsMatch = segmentCount === 1;
+    else if (stops === '1') stopsMatch = segmentCount <= 2;
+    else if (stops === '2+') stopsMatch = segmentCount > 2;
+
+    // Filter by carrier
+    const offerCarriers = offer.itineraries.flatMap(itinerary =>
+      itinerary.segments.map(segment => segment.carrierCode)
+    );
+    const carrierMatch = selectedCarriers.length === 0 ||
+      offerCarriers.some(code => selectedCarriers.includes(code));
+
+    return stopsMatch && carrierMatch;
   });
 
   return (
@@ -241,12 +262,15 @@ export default function Home() {
                   setTripType={handleTripTypeChange}
                   stops={stops}
                   setStops={handleStopsChange}
+                  carriers={allCarriers}
+                  selectedCarriers={selectedCarriers}
+                  setSelectedCarriers={setSelectedCarriers}
                 />
               </div>
 
               {/* Middle Column: Results */}
               <div className="flex-1 h-full overflow-y-auto px-2 pb-20 no-scrollbar">
-                <FlightResults results={filteredResults} />
+                <FlightResults results={filteredResults} carrierNames={carrierNames} />
               </div>
 
               {/* Right Column: Chart (Transparent) */}
