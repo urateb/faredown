@@ -265,10 +265,10 @@ export default function SearchForm({
                     )}
                 </div>
 
-                <div className={`switch-button absolute z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
-                    ? 'left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Adjusted for vertical (approx between fields) - Needs simple logic if we know height
-                    : '-ml-4 -mr-4'
-                    } ${isVertical ? 'hidden' : ''}`} // Hiding swap in vertical for simplicity as requested/planned or keep? Plan said hide or adjust. Hiding for clean sidebar.
+                <div className={`switch-button z-20 bg-white border border-gray-100 rounded-full p-1.5 shadow-sm cursor-pointer hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors ${isVertical
+                    ? 'absolute left-1/2 -translate-x-1/2 top-[calc(50%-1.75rem)]' // Vertical: Absolute centered
+                    : '-ml-4 -mr-4 relative' // Horizontal: Relative with negative margins to sit between flex items
+                    } ${isVertical ? 'hidden' : ''}`} // Keep hidden in vertical for now unless requested
                     onClick={handleSwapLocations}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 </div>
