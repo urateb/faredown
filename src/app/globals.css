@@ -133,6 +133,23 @@
   input[type='range'] {
     accent-color: var(--color-brand-400);
   }
+
+  button:not(:disabled),
+  [type='button']:not(:disabled),
+  [type='submit']:not(:disabled),
+  a[href],
+  label,
+  select,
+  summary,
+  input[type='checkbox'],
+  input[type='date'] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [type='submit']:disabled {
+    cursor: not-allowed;
+  }
 }
 
 @layer utilities {

@@ -99,7 +99,7 @@ export function SearchForm({
             onChange={(event) => onChange({ currency: event.target.value as CurrencyCode })}
             aria-label="Fare currency"
             className={cn(
-              'rounded-md border py-0.5 pr-6 pl-1.5 text-sm font-medium',
+              'cursor-pointer rounded-md border py-0.5 pr-6 pl-1.5 text-sm font-medium',
               isHero
                 ? 'border-white/35 bg-white/15 text-white'
                 : 'border-ink-700 bg-ink-900 text-ink-50',
@@ -118,7 +118,9 @@ export function SearchForm({
           onClick={swapEndpoints}
           className={cn(
             'inline-flex items-center gap-1.5 text-sm font-medium lg:hidden',
-            isHero ? 'text-white/90 hover:text-white' : 'text-ink-300 hover:text-ink-50',
+            isHero
+              ? 'cursor-pointer text-white/90 hover:text-white'
+              : 'text-ink-300 hover:text-ink-50 cursor-pointer',
           )}
         >
           <SwapIcon />
@@ -136,11 +138,11 @@ export function SearchForm({
       >
         <div
           className={cn(
-            'grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_auto]',
-            isHero && 'xl:h-full xl:items-center xl:gap-0',
+            'grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:gap-x-0',
+            isHero && 'xl:h-full',
           )}
         >
-          <Field className="lg:border-ink-800 lg:border-r lg:pr-4">
+          <Field className="lg:border-ink-800 relative lg:border-r">
             <AirportCombobox
               id={`${ids}-origin`}
               label="From"
@@ -149,20 +151,17 @@ export function SearchForm({
               onChange={(origin) => onChange({ origin })}
               error={fieldErrors.origin}
             />
-          </Field>
-
-          <div className="hidden items-center lg:flex">
             <button
               type="button"
               onClick={swapEndpoints}
               aria-label="Swap origin and destination"
-              className="border-ink-700 text-ink-400 hover:border-brand-400 hover:text-brand-300 bg-ink-800 rounded-full border p-2 transition-colors"
+              className="border-ink-800 text-ink-400 hover:border-brand-400 hover:text-brand-400 absolute top-1/2 right-0 z-20 hidden h-9 w-9 translate-x-[calc(50%+0.5rem)] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border bg-white shadow-md transition-colors lg:flex"
             >
               <SwapIcon />
             </button>
-          </div>
+          </Field>
 
-          <Field className="lg:border-ink-800 lg:border-r lg:pr-4">
+          <Field className="lg:border-ink-800 lg:border-r">
             <AirportCombobox
               id={`${ids}-destination`}
               label="To"
@@ -215,7 +214,7 @@ export function SearchForm({
                   id={`${ids}-adults`}
                   value={criteria.adults}
                   onChange={(event) => onChange({ adults: Number(event.target.value) })}
-                  className="text-ink-50 w-full border-none bg-transparent py-0 pr-6 pl-0 text-base font-medium outline-none"
+                  className="text-ink-50 w-full cursor-pointer border-none bg-transparent py-0 pr-6 pl-0 text-base font-medium outline-none"
                 >
                   {Array.from({ length: MAX_ADULTS }, (_, index) => index + 1).map((count) => (
                     <option key={count} value={count}>
@@ -236,7 +235,7 @@ export function SearchForm({
                   id={`${ids}-cabin`}
                   value={criteria.cabin}
                   onChange={(event) => onChange({ cabin: event.target.value as CabinClass })}
-                  className="text-ink-50 w-full border-none bg-transparent py-0 pr-6 pl-0 text-base font-medium outline-none"
+                  className="text-ink-50 w-full cursor-pointer border-none bg-transparent py-0 pr-6 pl-0 text-base font-medium outline-none"
                 >
                   {CABIN_CLASSES.map((cabin) => (
                     <option key={cabin} value={cabin}>
@@ -250,7 +249,7 @@ export function SearchForm({
                 type="submit"
                 disabled={isLoading}
                 className={cn(
-                  'bg-brand-400 hover:bg-brand-300 flex shrink-0 items-center justify-center font-semibold text-white transition-colors disabled:opacity-60',
+                  'bg-brand-400 hover:bg-brand-300 flex shrink-0 cursor-pointer items-center justify-center font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60',
                   isHero ? 'h-14 w-14 rounded-full xl:h-16 xl:w-16' : 'h-12 gap-2 rounded-xl px-5',
                 )}
               >
@@ -332,7 +331,7 @@ function DateField({
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
-        className="text-ink-50 w-full border-none bg-transparent p-0 text-base font-medium outline-none"
+        className="text-ink-50 w-full cursor-pointer border-none bg-transparent p-0 text-base font-medium outline-none"
       />
       {error && (
         <p id={errorId} className="text-up-400 mt-0.5 text-xs font-medium">
@@ -373,7 +372,7 @@ function TripTypeToggle({
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+              'cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
               selected
                 ? 'text-ink-50 bg-white shadow-sm'
                 : onPhoto
