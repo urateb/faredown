@@ -1,28 +1,43 @@
 {
-  "name": "flyhigh",
-  "version": "0.1.0",
+  "name": "faredown",
+  "version": "1.0.0",
   "private": true,
+  "description": "Flight search that shows you whether today's fare is actually a good one.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
-    "amadeus": "^11.0.0",
     "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "^3.7.0"
+    "recharts": "^3.7.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^22.20.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.0"
   }
 }
