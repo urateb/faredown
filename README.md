@@ -1,65 +1,72 @@
-# FlyHigh ✈️
+# Faredown
 
-**FlyHigh** is a premium, high-performance flight search engine built with modern web technologies. It provides a seamless user experience for finding the best flight deals with real-time data and stunning visual feedback.
+**Know whether the fare is actually good.**
 
-## ✨ Features
+Faredown is a flight search you can share. It retrieves current offers and pricing through the Google Flights data API, prices the days either side of your departure, and hands you off to the airline or a booking site. It does not sell tickets.
 
-- 🔍 **Real-time Flight Search**: Integrated with the Amadeus API for accurate, up-to-date flight offers.
-- 🖼️ **Dynamic Visuals**: Immersive landing page with a dynamic slideshow featuring beautiful global destinations.
-- 📊 **Price Trends**: Visualized price data using Recharts to help users find the best time to book.
-- 🛠️ **Advanced Filtering**: Filter by stops, carriers, and trip types (Roundtrip/One-way).
-- 📱 **Fully Responsive**: Optimized for Mobile, Tablet, and Desktop with a premium look and feel.
-- ⚡ **Modern Stack**: Built with Next.js 16 (App Router), React 19, and Tailwind CSS 4.
+A result is encoded entirely in the URL. Opening a Faredown link renders that search on the server, with no empty first paint and no client-side waterfall.
 
-## 🚀 Tech Stack
+## Features
 
-- **Framework**: [Next.js 16](https://nextjs.org/)
-- **UI & Logic**: [React 19](https://reactjs.org/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Data Visualization**: [Recharts](https://recharts.org/)
-- **API**: [Amadeus SDK](https://github.com/amadeusitgroup/amadeus-node)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Live Flight Search:** Retrieves current flight offers and pricing through the Google Flights data API, with server-side caching to reduce unnecessary external requests.
+- **Nearby dates:** Prices neighbouring departures while holding trip length fixed, so you can see whether the day you picked is the cheap one.
+- **Price vs duration:** Recharts plots returned fares so a small saving is never confused with a long layover.
+- **Filters:** Stops, carriers, and trip type (round-trip / one-way).
+- **Booking hand-off:** Opens the airline, Google Flights, Kayak, or Skyscanner with the route and dates filled in. There is no fake checkout.
 
-## 🛠️ Getting Started
+## Stack
 
-### Prerequisites
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **UI:** [React 19](https://react.dev/) · [Tailwind CSS 4](https://tailwindcss.com/)
+- **Charts:** [Recharts](https://recharts.org/)
+- **Flight data:** [SerpApi Google Flights](https://serpapi.com/google-flights-api)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Tests:** [Vitest](https://vitest.dev/)
 
-You'll need an Amadeus API key. Register at [Amadeus for Developers](https://developers.amadeus.com/).
+## Setup
 
-### Installation
+You need a SerpApi key. The key stays on the server as `SERPAPI_KEY` and is never sent to the browser.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/urateb/flyhigh.git
-   cd flyhigh
-   ```
+1. Register at [serpapi.com/users/sign_up](https://serpapi.com/users/sign_up) (250 free searches/month).
+2. Copy the API key from the dashboard.
+3. Clone, install, and configure:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/urateb/flyhigh.git
+cd flyhigh
+npm install
+cp .env.example .env.local
+```
 
-3. Set up environment variables:
-   Create a `.env.local` file in the root directory and add your Amadeus credentials:
-   ```env
-   AMADEUS_CLIENT_ID=your_client_id
-   AMADEUS_CLIENT_SECRET=your_client_secret
-   ```
+```env
+SERPAPI_KEY=your_key_here
+NEXT_PUBLIC_DEFAULT_CURRENCY=EUR
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
 4. Run the development server:
-   ```bash
-   npm run dev
-   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the results.
+```bash
+npm run dev
+```
 
-## 📸 Screenshots
+Open [http://localhost:3000](http://localhost:3000).
 
-### Landing Page
-![Landing Page](public/screenshots/landing.png)
+### Caching
 
-### Search Results & Price Trends
-![Search Results](public/screenshots/results.png)
+Identical searches are cached in memory for 15 minutes. SerpApi also does not bill a repeat of the same query within an hour. Refreshing a results link should not spend another search. The nearby-dates grid reuses that cache so the selected day is not billed twice.
 
-### Mobile & Filter View
-![Mobile View](public/screenshots/mobile.png)
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm test` | Vitest |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
+
+## How a search works
+
+The home page is a server component. Query parameters (`from`, `to`, `depart`, `return`, …) are the search. The server validates them, rate-limits the caller, asks SerpApi, and renders the offers. Filters, sort, and the price-vs-duration chart then run in the browser against that result set.
