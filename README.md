@@ -43,8 +43,8 @@ You need a SerpApi key. The key stays on the server as `SERPAPI_KEY` and is neve
 3. Clone, install, and configure:
 
 ```bash
-git clone https://github.com/urateb/flyhigh.git
-cd flyhigh
+git clone https://github.com/urateb/faredown.git
+cd faredown
 npm install
 cp .env.example .env.local
 ```
