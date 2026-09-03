@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn';
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-shimmer bg-ink-800 rounded-lg', className)} />;
+  return <div className={cn('animate-shimmer bg-ink-700 rounded-lg', className)} />;
 }
 
 export function Spinner({ className }: { className?: string }) {

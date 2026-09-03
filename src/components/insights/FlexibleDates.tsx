@@ -83,8 +83,8 @@ export function FlexibleDates({ grid, isLoading, onPickDate }: FlexibleDatesProp
                 className={cn(
                   'group flex w-full flex-col items-center gap-1.5 rounded-lg px-0.5 py-1.5 transition-colors',
                   day.isSelected
-                    ? 'bg-ink-800'
-                    : day.price !== null && 'hover:bg-ink-800 cursor-pointer',
+                    ? 'bg-white shadow-sm ring-1 ring-brand-400/20'
+                    : day.price !== null && 'hover:bg-white/70 cursor-pointer',
                   day.price === null && 'cursor-not-allowed',
                 )}
               >

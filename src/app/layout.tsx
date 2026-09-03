@@ -41,15 +41,15 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#080b10',
-  colorScheme: 'dark',
+  themeColor: '#eef3f8',
+  colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} dark`}>
+    <html lang="en" className={geistSans.variable}>
       <body className="min-h-dvh antialiased">
         <script
           type="application/ld+json"

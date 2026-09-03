@@ -12,8 +12,7 @@ interface AirlineLogoProps {
 }
 
 /**
- * Airline mark, rendered as a light glyph so it matches the rest of the dark UI.
- * A missing file degrades to the carrier code.
+ * Airline mark. A missing file degrades to the carrier code.
  */
 export function AirlineLogo({ carrierCode, carrierName, size = 32, className }: AirlineLogoProps) {
   const [failed, setFailed] = useState(false);
@@ -46,7 +45,7 @@ export function AirlineLogo({ carrierCode, carrierName, size = 32, className }: 
       loading="lazy"
       title={carrierName}
       onError={() => setFailed(true)}
-      className={cn('shrink-0 object-contain brightness-0 invert', className)}
+      className={cn('shrink-0 object-contain', className)}
       style={{ width: size, height: size }}
     />
   );

@@ -5,7 +5,7 @@ import { GITHUB_REPO_URL, SITE_NAME } from '@/lib/brand';
 
 export function SiteFooter() {
   return (
-    <footer className="border-ink-800 mt-auto border-t bg-ink-950">
+    <footer className="border-ink-800 mt-auto border-t bg-white/40">
       <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-sm">
           <Logo />

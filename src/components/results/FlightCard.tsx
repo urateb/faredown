@@ -34,7 +34,7 @@ export function FlightCard({ offer, badges, travellers, onSelect }: FlightCardPr
   const detailsId = useId();
 
   return (
-    <article className="border-ink-800 hover:border-ink-700 overflow-hidden rounded-2xl border bg-ink-900 transition-colors">
+    <article className="border-ink-800 overflow-hidden rounded-2xl border bg-white/80 shadow-[0_10px_30px_-18px_rgb(40_70_110_/_0.28)] transition-colors hover:border-ink-700">
       <div className="flex flex-col lg:flex-row">
         <div className="min-w-0 flex-1 p-5">
           {badges.length > 0 && (
@@ -103,7 +103,7 @@ export function FlightCard({ offer, badges, travellers, onSelect }: FlightCardPr
           <button
             type="button"
             onClick={() => onSelect(offer)}
-            className="bg-brand-400 text-ink-950 hover:bg-brand-300 h-11 rounded-xl px-6 font-semibold transition-colors lg:w-full"
+            className="bg-brand-400 hover:bg-brand-300 h-11 rounded-xl px-6 font-semibold text-white transition-colors lg:w-full"
           >
             Select
           </button>

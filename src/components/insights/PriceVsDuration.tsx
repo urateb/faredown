@@ -82,28 +82,28 @@ export function PriceVsDuration({ offers, currency }: PriceVsDurationProps) {
         {ready && (
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 8, right: 8, bottom: 4, left: -12 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#2a3340" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#d5e0eb" />
             <XAxis
               type="number"
               dataKey="hours"
               name="Travel time"
               unit="h"
-              tick={{ fill: '#8b9aab', fontSize: 11 }}
+              tick={{ fill: '#7b8ea3', fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: '#2a3340' }}
+              axisLine={{ stroke: '#d5e0eb' }}
             />
             <YAxis
               type="number"
               dataKey="price"
               name="Price"
-              tick={{ fill: '#8b9aab', fontSize: 11 }}
+              tick={{ fill: '#7b8ea3', fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               width={52}
             />
             <ZAxis range={[45, 45]} />
             <Tooltip
-              cursor={{ strokeDasharray: '3 3', stroke: '#3d4858' }}
+              cursor={{ strokeDasharray: '3 3', stroke: '#b7c5d4' }}
               content={({ active, payload }) => {
                 const point = active ? (payload?.[0]?.payload as Point | undefined) : undefined;
                 if (!point) return null;
@@ -122,7 +122,7 @@ export function PriceVsDuration({ offers, currency }: PriceVsDurationProps) {
                 );
               }}
             />
-            <Scatter data={points} fill="#2dd4bf" fillOpacity={0.8} />
+            <Scatter data={points} fill="#0f766e" fillOpacity={0.8} />
           </ScatterChart>
         </ResponsiveContainer>
         )}

@@ -13,7 +13,7 @@ export default function OpenGraphImage() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        background: '#0b131d',
+        background: '#eef3f8',
         padding: 72,
       }}
     >
@@ -46,12 +46,12 @@ export default function OpenGraphImage() {
               display: 'flex',
               fontSize: 32,
               fontWeight: 600,
-              color: '#ffffff',
+              color: '#1c2838',
               letterSpacing: -0.5,
             }}
           >
             <span>fare</span>
-            <span style={{ color: '#5eead4' }}>down</span>
+            <span style={{ color: '#0f766e' }}>down</span>
           </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function OpenGraphImage() {
           style={{
             fontSize: 64,
             fontWeight: 600,
-            color: '#ffffff',
+            color: '#1c2838',
             lineHeight: 1.1,
             letterSpacing: -1.5,
             maxWidth: 900,
@@ -68,7 +68,7 @@ export default function OpenGraphImage() {
         >
           Know whether the fare is actually good.
         </div>
-        <div style={{ fontSize: 28, color: '#b0c0cf', maxWidth: 760 }}>
+        <div style={{ fontSize: 28, color: '#5a6d84', maxWidth: 760 }}>
           Live airline prices, the week around your date, then a hand-off to somewhere that sells
           the ticket.
         </div>

@@ -143,7 +143,7 @@ export function AirportCombobox({
           id={listboxId}
           role="listbox"
           aria-label={`${label} suggestions`}
-          className="border-ink-700 bg-ink-900 absolute top-full left-0 z-50 mt-2 max-h-72 w-[min(22rem,80vw)] overflow-y-auto rounded-xl border py-1 shadow-2xl"
+          className="border-ink-700 absolute top-full left-0 z-50 mt-2 max-h-72 w-[min(22rem,80vw)] overflow-y-auto rounded-xl border bg-white py-1 shadow-[0_16px_40px_-12px_rgb(40_70_110_/_0.3)]"
         >
           {places.map((place, index) => (
             <li

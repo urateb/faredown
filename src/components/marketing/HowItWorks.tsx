@@ -18,7 +18,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-it-works-heading"
-      className="border-ink-800 border-t bg-ink-950"
+      className="border-ink-800 border-t bg-white/35"
     >
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
         <p className="text-brand-400 text-[11px] font-semibold tracking-[0.2em] uppercase">

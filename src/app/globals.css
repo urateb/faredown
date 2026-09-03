@@ -1,46 +1,46 @@
 @import 'tailwindcss';
 
 /**
- * Dark-first tokens.
+ * Light, cloudy tokens.
  *
- * `ink` is the surface and type scale. `brand` is interaction. `down`/`up`
- * are reserved for cheaper vs dearer — they are not used decoratively.
+ * `ink` is the surface and type scale (50 = text, 950 = sky). `brand` is
+ * interaction. `down`/`up` are reserved for cheaper vs dearer.
  */
 @theme {
-  --color-ink-50: #f3f6f9;
-  --color-ink-100: #d7dee7;
-  --color-ink-200: #b4c0ce;
-  --color-ink-300: #8b9aab;
-  --color-ink-400: #6d7d90;
-  --color-ink-500: #556274;
-  --color-ink-600: #3d4858;
-  --color-ink-700: #2a3340;
-  --color-ink-800: #1a212c;
-  --color-ink-900: #11161e;
-  --color-ink-950: #080b10;
+  --color-ink-50: #1c2838;
+  --color-ink-100: #2a384c;
+  --color-ink-200: #3d4f66;
+  --color-ink-300: #5a6d84;
+  --color-ink-400: #7b8ea3;
+  --color-ink-500: #93a4b8;
+  --color-ink-600: #b7c5d4;
+  --color-ink-700: #cfdbe6;
+  --color-ink-800: #e1eaf2;
+  --color-ink-900: #f7fafc;
+  --color-ink-950: #eef3f8;
 
-  --color-brand-50: rgb(45 212 191 / 0.1);
-  --color-brand-100: rgb(45 212 191 / 0.18);
+  --color-brand-50: rgb(15 118 110 / 0.1);
+  --color-brand-100: rgb(15 118 110 / 0.16);
   --color-brand-200: #99f6e4;
-  --color-brand-300: #5eead4;
-  --color-brand-400: #2dd4bf;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
+  --color-brand-300: #0d9488;
+  --color-brand-400: #0f766e;
+  --color-brand-500: #0f766e;
+  --color-brand-600: #115e59;
+  --color-brand-700: #134e4a;
+  --color-brand-800: #134e4a;
+  --color-brand-900: #042f2e;
 
-  --color-down-50: rgb(52 211 153 / 0.12);
-  --color-down-100: rgb(52 211 153 / 0.22);
-  --color-down-400: #34d399;
-  --color-down-600: #34d399;
-  --color-down-700: #6ee7b7;
+  --color-down-50: rgb(5 150 105 / 0.1);
+  --color-down-100: rgb(5 150 105 / 0.18);
+  --color-down-400: #059669;
+  --color-down-600: #047857;
+  --color-down-700: #065f46;
 
-  --color-up-50: rgb(251 113 133 / 0.12);
-  --color-up-100: rgb(251 113 133 / 0.22);
-  --color-up-400: #fb7185;
-  --color-up-600: #fb7185;
-  --color-up-700: #fda4af;
+  --color-up-50: rgb(225 29 72 / 0.1);
+  --color-up-100: rgb(225 29 72 / 0.16);
+  --color-up-400: #e11d48;
+  --color-up-600: #be123c;
+  --color-up-700: #9f1239;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 
@@ -72,17 +72,17 @@
 @keyframes shimmer {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.45;
   }
   50% {
-    opacity: 0.75;
+    opacity: 0.85;
   }
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
@@ -93,7 +93,7 @@
 
   ::selection {
     background: var(--color-brand-400);
-    color: var(--color-ink-950);
+    color: #fff;
   }
 
   :focus-visible {
@@ -103,16 +103,16 @@
   }
 
   input[type='date'] {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   input[type='date']::-webkit-calendar-picker-indicator {
     cursor: pointer;
     width: 1rem;
     height: 1rem;
-    opacity: 0.85;
+    opacity: 0.7;
     filter: none;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23d7dee7'%3E%3Crect x='3' y='5' width='18' height='16' rx='2' stroke-width='2'/%3E%3Cpath stroke-width='2' stroke-linecap='round' d='M8 3v4M16 3v4M3 11h18'/%3E%3C/svg%3E")
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233d4f66'%3E%3Crect x='3' y='5' width='18' height='16' rx='2' stroke-width='2'/%3E%3Cpath stroke-width='2' stroke-linecap='round' d='M8 3v4M16 3v4M3 11h18'/%3E%3C/svg%3E")
       center / contain no-repeat;
   }
 
@@ -121,9 +121,9 @@
   }
 
   select {
-    color-scheme: dark;
+    color-scheme: light;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23d7dee7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233d4f66'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.15rem center;
     background-size: 1rem;
@@ -146,21 +146,12 @@
   }
 
   .ambient {
+    background-color: var(--color-ink-950);
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgb(45 212 191 / 0.14), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 0%, rgb(14 165 233 / 0.08), transparent 50%),
-      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
-    background-size:
-      auto,
-      auto,
-      64px 64px,
-      64px 64px;
-    background-position:
-      center,
-      center,
-      center -1px,
-      -1px center;
+      radial-gradient(ellipse 80% 55% at 12% -8%, rgb(255 255 255 / 0.95), transparent 58%),
+      radial-gradient(ellipse 70% 50% at 92% 0%, rgb(186 214 238 / 0.55), transparent 52%),
+      radial-gradient(ellipse 55% 40% at 48% 18%, rgb(255 255 255 / 0.65), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 70% 100%, rgb(255 255 255 / 0.8), transparent 55%);
   }
 }
 

@@ -102,7 +102,7 @@ export function SearchForm({
         </button>
       </fieldset>
 
-      <div className="border-ink-800 bg-ink-900/90 rounded-2xl border p-3 shadow-[0_24px_80px_-32px_rgb(0_0_0_/_0.85)] backdrop-blur-xl sm:p-4">
+      <div className="border-ink-800 rounded-2xl border bg-white/80 p-3 shadow-[0_18px_50px_-20px_rgb(40_70_110_/_0.28)] backdrop-blur-xl sm:p-4">
         <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_auto]">
           <Field className="lg:border-ink-800 lg:border-r lg:pr-4">
             <AirportCombobox
@@ -213,7 +213,7 @@ export function SearchForm({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-brand-400 text-ink-950 hover:bg-brand-300 flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-5 font-semibold transition-colors disabled:opacity-60"
+                className="bg-brand-400 hover:bg-brand-300 flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-5 font-semibold text-white transition-colors disabled:opacity-60"
               >
                 {isLoading ? (
                   <Spinner className="h-5 w-5" />
@@ -317,7 +317,7 @@ function TripTypeToggle({
   ];
 
   return (
-    <div className="border-ink-800 bg-ink-900 inline-flex rounded-lg border p-0.5">
+    <div className="border-ink-800 bg-ink-800/80 inline-flex rounded-lg border p-0.5">
       {options.map((option) => {
         const selected = value === option.value;
         return (
@@ -328,7 +328,7 @@ function TripTypeToggle({
             onClick={() => onChange(option.value)}
             className={cn(
               'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-              selected ? 'bg-ink-700 text-ink-50' : 'text-ink-400 hover:text-ink-50',
+              selected ? 'bg-white text-ink-50 shadow-sm' : 'text-ink-400 hover:text-ink-50',
             )}
           >
             {option.label}

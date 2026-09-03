@@ -15,7 +15,7 @@ export default function NotFoundPage() {
       <p className="mt-8">
         <Link
           href="/"
-          className="bg-brand-400 text-ink-950 hover:bg-brand-300 inline-flex h-11 items-center rounded-xl px-5 font-semibold"
+          className="bg-brand-400 hover:bg-brand-300 inline-flex h-11 items-center rounded-xl px-5 font-semibold text-white"
         >
           Search flights
         </Link>

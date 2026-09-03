@@ -1,5 +1,5 @@
 /**
- * Landing atmosphere: a dark canvas with a faint grid and a teal wash.
+ * Landing atmosphere: a pale sky with soft cloud washes.
  * Photography is not used — the product should look like a tool, not a brochure.
  */
 export function Hero({ children }: { children: React.ReactNode }) {
