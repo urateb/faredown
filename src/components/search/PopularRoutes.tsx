@@ -38,7 +38,7 @@ export function PopularRoutes({ criteria, onSelect, onPhoto = false }: PopularRo
             });
           }}
           className={cn(
-            'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+            'cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
             onPhoto
               ? 'border-white/35 bg-white/15 text-white hover:border-white/60 hover:bg-white/25'
               : 'border-ink-700 text-ink-200 hover:border-ink-500 bg-white/50 hover:bg-white/80',

@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
  * Landing only — no search, so this does not spend a SerpApi credit.
  */
 test('landing page renders the search form and validates empty submit', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
   await expect(

@@ -99,7 +99,7 @@ export function AirportCombobox({
     <div ref={wrapperRef} className="relative">
       <label
         htmlFor={id}
-        className="text-ink-400 block text-[11px] font-semibold tracking-wider uppercase"
+        className="text-ink-400 mb-0.5 block text-xs font-bold tracking-wide uppercase"
       >
         {label}
       </label>
@@ -128,7 +128,7 @@ export function AirportCombobox({
           setIsOpen(true);
         }}
         onKeyDown={handleKeyDown}
-        className="text-ink-50 placeholder:text-ink-500 w-full border-none bg-transparent p-0 text-base font-medium outline-none"
+        className="text-ink-50 placeholder:text-ink-400 w-full border-none bg-transparent p-0 text-sm font-semibold outline-none"
       />
 
       {error && (
