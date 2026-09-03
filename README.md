@@ -6,6 +6,17 @@ Faredown is a flight search you can share. It retrieves current offers and prici
 
 A result is encoded entirely in the URL. Opening a Faredown link renders that search on the server, with no empty first paint and no client-side waterfall.
 
+## Screenshots
+
+### Landing
+![Landing page](docs/screenshots/landing.png)
+
+### Search results
+![Search results with nearby dates and filters](docs/screenshots/results.png)
+
+### Mobile
+![Mobile results](docs/screenshots/mobile.png)
+
 ## Features
 
 - **Live Flight Search:** Retrieves current flight offers and pricing through the Google Flights data API, with server-side caching to reduce unnecessary external requests.
