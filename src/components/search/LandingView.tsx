@@ -33,13 +33,13 @@ export function LandingView({
           className="flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6"
         >
           <div className="mb-10 max-w-2xl text-center">
-            <p className="text-brand-400 mb-3 text-[11px] font-semibold tracking-[0.2em] uppercase">
+            <p className="mb-3 text-[11px] font-semibold tracking-[0.2em] text-white/80 uppercase">
               Live fares · nearby dates
             </p>
-            <h1 className="text-ink-50 text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
               Know whether the fare is actually good
             </h1>
-            <p className="text-ink-300 mt-4 text-base sm:text-lg">
+            <p className="mt-4 text-base text-white/80 sm:text-lg">
               Search live airline fares, then see them next to the days either side — so you find
               out whether the date you picked is the cheap one before you book, not after.
             </p>
@@ -54,7 +54,7 @@ export function LandingView({
             variant="hero"
           />
 
-          <PopularRoutes criteria={criteria} onSelect={onSubmit} />
+          <PopularRoutes criteria={criteria} onSelect={onSubmit} onPhoto />
         </main>
       </Hero>
       <HowItWorks />

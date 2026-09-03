@@ -32,12 +32,17 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ className }: LogoProps) {
+export function Logo({ className, onDark = false }: LogoProps & { onDark?: boolean }) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
       <LogoMark />
-      <span className="text-ink-50 text-[1.35rem] font-semibold tracking-tight">
-        fare<span className="text-brand-400">down</span>
+      <span
+        className={cn(
+          'text-[1.35rem] font-semibold tracking-tight',
+          onDark ? 'text-white' : 'text-ink-50',
+        )}
+      >
+        fare<span className={onDark ? 'text-brand-200' : 'text-brand-400'}>down</span>
       </span>
     </span>
   );

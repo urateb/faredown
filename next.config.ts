@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Airline logos, keyed by IATA carrier code.
       { protocol: 'https', hostname: 'pics.avs.io' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
   async headers() {

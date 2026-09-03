@@ -12,3 +12,9 @@ export const POPULAR_ROUTES: readonly PopularRoute[] = [
   { origin: 'SFO', destination: 'JFK', label: 'San Francisco → New York' },
   { origin: 'CDG', destination: 'BCN', label: 'Paris → Barcelona' },
 ];
+
+/** First landing slide from the original FlyHigh hero. */
+export const HERO_BACKGROUND = {
+  src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=3242&auto=format&fit=crop',
+  alt: 'Road trip through the canyon',
+} as const;

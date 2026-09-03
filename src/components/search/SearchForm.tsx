@@ -58,15 +58,26 @@ export function SearchForm({
       aria-label="Flight search"
       className={cn('w-full', isHero ? 'max-w-5xl' : 'max-w-6xl')}
     >
-      <fieldset className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-0 p-0">
+      <fieldset
+        className={cn(
+          'mb-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-0 p-0',
+          isHero && 'text-white',
+        )}
+      >
         <legend className="sr-only">Trip options</legend>
 
         <TripTypeToggle
           value={criteria.tripType}
           onChange={(tripType) => onChange({ tripType })}
+          onPhoto={isHero}
         />
 
-        <label className="text-ink-200 flex cursor-pointer items-center gap-2 text-sm font-medium">
+        <label
+          className={cn(
+            'flex cursor-pointer items-center gap-2 text-sm font-medium',
+            isHero ? 'text-white/90' : 'text-ink-200',
+          )}
+        >
           <input
             type="checkbox"
             checked={criteria.nonStop}
@@ -76,13 +87,23 @@ export function SearchForm({
           Direct flights only
         </label>
 
-        <label className="text-ink-200 flex items-center gap-2 text-sm font-medium">
-          <span className="text-ink-400">Currency</span>
+        <label
+          className={cn(
+            'flex items-center gap-2 text-sm font-medium',
+            isHero ? 'text-white/90' : 'text-ink-200',
+          )}
+        >
+          <span className={isHero ? 'text-white/70' : 'text-ink-400'}>Currency</span>
           <select
             value={criteria.currency}
             onChange={(event) => onChange({ currency: event.target.value as CurrencyCode })}
             aria-label="Fare currency"
-            className="border-ink-700 bg-ink-900 text-ink-50 rounded-md border py-0.5 pr-6 pl-1.5 text-sm font-medium"
+            className={cn(
+              'rounded-md border py-0.5 pr-6 pl-1.5 text-sm font-medium',
+              isHero
+                ? 'border-white/35 bg-white/15 text-white'
+                : 'border-ink-700 bg-ink-900 text-ink-50',
+            )}
           >
             {CURRENCIES.map((code) => (
               <option key={code} value={code}>
@@ -95,15 +116,30 @@ export function SearchForm({
         <button
           type="button"
           onClick={swapEndpoints}
-          className="text-ink-300 hover:text-ink-50 inline-flex items-center gap-1.5 text-sm font-medium lg:hidden"
+          className={cn(
+            'inline-flex items-center gap-1.5 text-sm font-medium lg:hidden',
+            isHero ? 'text-white/90 hover:text-white' : 'text-ink-300 hover:text-ink-50',
+          )}
         >
           <SwapIcon />
           Swap airports
         </button>
       </fieldset>
 
-      <div className="border-ink-800 rounded-2xl border bg-white/80 p-3 shadow-[0_18px_50px_-20px_rgb(40_70_110_/_0.28)] backdrop-blur-xl sm:p-4">
-        <div className="grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_auto]">
+      <div
+        className={cn(
+          'relative z-10 border bg-white shadow-xl',
+          isHero
+            ? 'rounded-3xl border-white/80 p-3 sm:p-4 xl:h-20 xl:rounded-full xl:py-0 xl:pr-2 xl:pl-3'
+            : 'border-ink-800 rounded-3xl p-3 sm:p-4',
+        )}
+      >
+        <div
+          className={cn(
+            'grid gap-3 lg:grid-cols-[1fr_auto_1fr_auto_auto]',
+            isHero && 'xl:h-full xl:items-center xl:gap-0',
+          )}
+        >
           <Field className="lg:border-ink-800 lg:border-r lg:pr-4">
             <AirportCombobox
               id={`${ids}-origin`}
@@ -120,7 +156,7 @@ export function SearchForm({
               type="button"
               onClick={swapEndpoints}
               aria-label="Swap origin and destination"
-              className="border-ink-700 text-ink-400 hover:border-brand-400 hover:text-brand-300 rounded-full border bg-ink-800 p-2 transition-colors"
+              className="border-ink-700 text-ink-400 hover:border-brand-400 hover:text-brand-300 bg-ink-800 rounded-full border p-2 transition-colors"
             >
               <SwapIcon />
             </button>
@@ -213,7 +249,10 @@ export function SearchForm({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-brand-400 hover:bg-brand-300 flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-5 font-semibold text-white transition-colors disabled:opacity-60"
+                className={cn(
+                  'bg-brand-400 hover:bg-brand-300 flex shrink-0 items-center justify-center font-semibold text-white transition-colors disabled:opacity-60',
+                  isHero ? 'h-14 w-14 rounded-full xl:h-16 xl:w-16' : 'h-12 gap-2 rounded-xl px-5',
+                )}
               >
                 {isLoading ? (
                   <Spinner className="h-5 w-5" />
@@ -226,7 +265,7 @@ export function SearchForm({
                     />
                   </svg>
                 )}
-                <span className={isHero ? '' : 'hidden xl:inline'}>
+                <span className={isHero ? 'sr-only' : 'hidden xl:inline'}>
                   {isLoading ? 'Searching' : 'Search'}
                 </span>
               </button>
@@ -307,9 +346,11 @@ function DateField({
 function TripTypeToggle({
   value,
   onChange,
+  onPhoto = false,
 }: {
   value: TripType;
   onChange: (value: TripType) => void;
+  onPhoto?: boolean;
 }) {
   const options: { value: TripType; label: string }[] = [
     { value: 'round-trip', label: 'Round trip' },
@@ -317,7 +358,12 @@ function TripTypeToggle({
   ];
 
   return (
-    <div className="border-ink-800 bg-ink-800/80 inline-flex rounded-lg border p-0.5">
+    <div
+      className={cn(
+        'inline-flex rounded-full border p-0.5',
+        onPhoto ? 'border-white/35 bg-white/15' : 'border-ink-800 bg-ink-800/80',
+      )}
+    >
       {options.map((option) => {
         const selected = value === option.value;
         return (
@@ -327,8 +373,12 @@ function TripTypeToggle({
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-              selected ? 'bg-white text-ink-50 shadow-sm' : 'text-ink-400 hover:text-ink-50',
+              'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+              selected
+                ? 'text-ink-50 bg-white shadow-sm'
+                : onPhoto
+                  ? 'text-white/80 hover:text-white'
+                  : 'text-ink-400 hover:text-ink-50',
             )}
           >
             {option.label}
