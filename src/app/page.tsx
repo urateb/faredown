@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 
-import { SearchPage, type SearchPageError } from '@/components/SearchPage';
+import { SearchPage, type SearchPageError } from '@/components/search/SearchPage';
 import { AppError } from '@/lib/errors';
 import { toAppError } from '@/lib/http/route-helpers';
 import { rateLimit } from '@/lib/rate-limit';

@@ -2,7 +2,7 @@
   "name": "faredown",
   "version": "1.0.0",
   "private": true,
-  "description": "Flight search that shows you whether today's fare is actually a good one.",
+  "description": "Know whether the fare is actually good. Live Google Flights search with nearby dates and a booking hand-off.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -23,6 +24,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
